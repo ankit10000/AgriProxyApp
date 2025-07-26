@@ -281,7 +281,7 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
   },
   headerCard: {
     margin: theme.spacing.md,

@@ -121,7 +121,7 @@ const AppNavigator = () => {
         <TabButton tab="home" icon={Home} label="Home" />
         <TabButton tab="store" icon={Store} label="Store" />
         <TabButton tab="soiltesting" icon={FlaskConical} label="Soil" />
-        <TabButton tab="plantdisease" icon={Bug} label="Disease" />
+        <TabButton tab="plantdisease" icon={Bug} label="Plant Disease" />
         <TabButton tab="profile" icon={User} label="Profile" />
       </View>
     </SafeAreaView>
@@ -131,8 +131,7 @@ const AppNavigator = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
-    paddingTop:50
+    backgroundColor: theme.colors.surface,
   },
   screenContainer: {
     flex: 1,
@@ -169,7 +168,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
     padding: theme.spacing.xl,
   },
   placeholderTitle: {
@@ -187,7 +186,7 @@ const styles = StyleSheet.create({
   // Notifications Screen Styles
   notificationsContainer: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
   },
   notificationsHeader: {
     padding: theme.spacing.md,

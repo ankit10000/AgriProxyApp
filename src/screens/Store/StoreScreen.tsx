@@ -205,7 +205,7 @@ export const StoreScreen: React.FC<StoreScreenProps> = ({ onTabChange }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
   },
   header: {
     paddingHorizontal: theme.spacing.md,
@@ -252,6 +252,7 @@ const styles = StyleSheet.create({
     marginRight: theme.spacing.sm,
     borderWidth: 1,
     borderColor: theme.colors.border,
+    height: theme.typography.sizes.xxl
   },
   selectedCategoryButton: {
     backgroundColor: theme.colors.primary,

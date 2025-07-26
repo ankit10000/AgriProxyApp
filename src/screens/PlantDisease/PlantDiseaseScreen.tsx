@@ -306,7 +306,7 @@ export const PlantDiseaseScreen: React.FC<PlantDiseaseScreenProps> = ({ onTabCha
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
   },
   headerCard: {
     margin: theme.spacing.md,

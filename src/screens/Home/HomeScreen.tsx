@@ -153,7 +153,7 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onTabChange }) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: theme.colors.background,
+    backgroundColor: theme.colors.surface,
   },
   welcomeSection: {
     margin: theme.spacing.md,
