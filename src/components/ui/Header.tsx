@@ -3,6 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from "react-native";
 import { Bell, Menu, ShoppingCart } from "lucide-react-native";
 import { useApp } from "../../context/AppContext";
 import { MenuOverlay } from "./MenuOverlay";
+import { LanguageToggle } from "./LanguageToggle";
 import { theme } from "../../styles/theme";
 import { TabName } from "../../types";
 
@@ -13,7 +14,7 @@ interface HeaderProps {
 const Logo: React.FC = () => (
   <View style={styles.logoContainer}>
     <Image
-      source={require("../../../assets/HomeLogo.png")}
+      source={require("../../../assets/Iconondark.png")}
       style={styles.logoImage}
       resizeMode="contain"
     />
@@ -32,16 +33,11 @@ export const Header: React.FC<HeaderProps> = ({ onTabChange }) => {
   return (
     <>
       <View style={styles.header}>
-        <TouchableOpacity
-          style={styles.actionButton}
-          onPress={() => setShowMenu(true)}
-        >
-          <Menu size={22} color={theme.colors.primary} />
-        </TouchableOpacity>
-
         <Logo />
 
         <View style={styles.headerActions}>
+          <LanguageToggle />
+
           <TouchableOpacity
             style={styles.actionButton}
             onPress={() => onTabChange("notifications")}
@@ -65,6 +61,13 @@ export const Header: React.FC<HeaderProps> = ({ onTabChange }) => {
               </View>
             )}
           </TouchableOpacity>
+
+          <TouchableOpacity
+            style={styles.actionButton}
+            onPress={() => setShowMenu(true)}
+          >
+            <Menu size={22} color={theme.colors.primary} />
+          </TouchableOpacity>
         </View>
       </View>
 
@@ -78,24 +81,18 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingHorizontal: theme.spacing.md,
+    paddingRight: theme.spacing.md,
     paddingVertical: theme.spacing.sm,
     backgroundColor: theme.colors.surface,
-    // borderBottomWidth: 1,
-    // borderBottomColor: theme.colors.border,
-    // elevation: 2,
-    // shadowColor: '#000',
-    // shadowOffset: { width: 0, height: 1 },
-    // shadowOpacity: 0.1,
-    // shadowRadius: 2,
   },
   logoContainer: {
-    alignItems: "center",
+    alignItems: "flex-start",
     justifyContent: "center",
+    marginLeft: -30,
   },
   logoImage: {
-    height: 40,
-    width: 150,
+    height: 60,
+    width: 160,
   },
   headerActions: {
     flexDirection: "row",

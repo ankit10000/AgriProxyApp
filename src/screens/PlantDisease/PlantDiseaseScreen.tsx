@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
-import { Camera, Search, Activity, AlertTriangle, CheckCircle2, Clock, FileImage, Bug } from 'lucide-react-native';
+import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert, Image, Modal, TextInput } from 'react-native';
+import { Camera, Search, Activity, AlertTriangle, CheckCircle2, Clock, FileImage, Bug, MapPin, Calendar, Mail, Send } from 'lucide-react-native';
 import { useApp } from '../../context/AppContext';
+import { useLocalization } from '../../context/LocalizationContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -15,16 +16,57 @@ interface PlantDiseaseScreenProps {
 
 export const PlantDiseaseScreen: React.FC<PlantDiseaseScreenProps> = ({ onTabChange }) => {
   const { state, dispatch } = useApp();
+  const { t } = useLocalization();
   const [isScanning, setIsScanning] = useState(false);
+  const [showCropSelection, setShowCropSelection] = useState(false);
+  const [selectedCrop, setSelectedCrop] = useState<any>(null);
+  const [selectedMonth, setSelectedMonth] = useState('');
+  const [address, setAddress] = useState('');
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [reportData, setReportData] = useState<any>(null);
+
+  const crops = [
+    { id: 1, name: 'Wheat', image: '🌾', months: ['October', 'November', 'December'] },
+    { id: 2, name: 'Rice', image: '🌾', months: ['June', 'July', 'August'] },
+    { id: 3, name: 'Cotton', image: '🌱', months: ['May', 'June', 'July'] },
+    { id: 4, name: 'Tomato', image: '🍅', months: ['February', 'March', 'April', 'October', 'November'] },
+    { id: 5, name: 'Potato', image: '🥔', months: ['October', 'November', 'December'] },
+    { id: 6, name: 'Onion', image: '🧅', months: ['October', 'November', 'December'] },
+    { id: 7, name: 'Groundnut', image: '🥜', months: ['June', 'July', 'August'] },
+    { id: 8, name: 'Mustard', image: '🌻', months: ['October', 'November', 'December'] }
+  ];
+
+  const handleCropSelection = () => {
+    setShowCropSelection(true);
+  };
+
+  const selectCrop = (crop: any) => {
+    setSelectedCrop(crop);
+    setSelectedMonth('');
+    setShowCropSelection(false);
+  };
 
   const handleCameraCapture = () => {
+    if (!selectedCrop) {
+      Alert.alert(t('plantDisease.selectCrop'), t('plantDisease.selectCropFirst'));
+      return;
+    }
+    if (!selectedMonth) {
+      Alert.alert(t('plantDisease.plantingMonth'), t('plantDisease.selectMonth'));
+      return;
+    }
+    if (!address.trim()) {
+      Alert.alert(t('plantDisease.fullAddress'), t('plantDisease.enterAddress'));
+      return;
+    }
+
     Alert.alert(
-      'Detect Plant Disease',
-      'Choose how you want to capture your plant image:',
+      t('plantDisease.detectDisease'),
+      t('plantDisease.chooseImageMethod'),
       [
-        { text: 'Take Photo', onPress: () => capturePhoto() },
-        { text: 'Upload from Gallery', onPress: () => uploadFromGallery() },
-        { text: 'Cancel', style: 'cancel' }
+        { text: t('plantDisease.takePhoto'), onPress: () => capturePhoto() },
+        { text: t('plantDisease.uploadFromGallery'), onPress: () => uploadFromGallery() },
+        { text: t('common.cancel'), style: 'cancel' }
       ]
     );
   };
@@ -32,17 +74,19 @@ export const PlantDiseaseScreen: React.FC<PlantDiseaseScreenProps> = ({ onTabCha
   const capturePhoto = async () => {
     try {
       setIsScanning(true);
-      
+
       // Simulate AI detection process
       const newDisease = {
         id: Date.now(),
         date: new Date().toISOString(),
-        crop: ['Wheat', 'Rice', 'Cotton', 'Tomato', 'Potato'][Math.floor(Math.random() * 5)],
+        crop: selectedCrop?.name || '',
         disease: '',
         severity: 'Low' as const,
         confidence: 0,
         treatment: '',
-        status: 'scanning' as const
+        status: 'scanning' as const,
+        month: selectedMonth,
+        address: address
       };
       
       dispatch({ type: 'ADD_PLANT_DISEASE', payload: newDisease });
@@ -70,11 +114,18 @@ export const PlantDiseaseScreen: React.FC<PlantDiseaseScreenProps> = ({ onTabCha
         };
         
         dispatch({ type: 'UPDATE_PLANT_DISEASE', payload: completedDetection });
+
+        // Set report data for email functionality
+        setReportData({
+          ...completedDetection,
+          month: selectedMonth,
+          address: address
+        });
       }, 2500);
-      
-      Alert.alert('Success', 'Plant image captured! AI analysis in progress...');
+
+      Alert.alert(t('common.success'), t('plantDisease.imageCapture'));
     } catch (error) {
-      Alert.alert('Error', 'Failed to capture plant image. Please try again.');
+      Alert.alert(t('common.error'), t('plantDisease.captureError'));
     } finally {
       setIsScanning(false);
     }
@@ -86,7 +137,7 @@ export const PlantDiseaseScreen: React.FC<PlantDiseaseScreenProps> = ({ onTabCha
       await new Promise(resolve => setTimeout(resolve, 1000));
       capturePhoto();
     } catch (error) {
-      Alert.alert('Error', 'Failed to upload image. Please try again.');
+      Alert.alert(t('common.error'), t('plantDisease.uploadError'));
       setIsScanning(false);
     }
   };
@@ -129,6 +180,17 @@ export const PlantDiseaseScreen: React.FC<PlantDiseaseScreenProps> = ({ onTabCha
     }
   };
 
+  const sendReportToSupport = () => {
+    if (!reportData) return;
+
+    // Simulate sending email to support team
+    Alert.alert(
+      t('plantDisease.reportSent'),
+      t('plantDisease.reportSentMessage'),
+      [{ text: t('common.ok'), onPress: () => setShowReportModal(false) }]
+    );
+  };
+
   const DiseaseCard: React.FC<{ disease: any }> = ({ disease }) => (
     <Card style={styles.diseaseCard}>
       <View style={styles.diseaseHeader}>
@@ -148,7 +210,7 @@ export const PlantDiseaseScreen: React.FC<PlantDiseaseScreenProps> = ({ onTabCha
         <View style={styles.scanningContainer}>
           <Activity size={24} color={theme.colors.warning} />
           <Text style={styles.scanningText}>
-            AI is analyzing your plant image... This may take a few moments.
+            {t('placeholders.scanningMessage')}
           </Text>
         </View>
       )}
@@ -180,21 +242,21 @@ export const PlantDiseaseScreen: React.FC<PlantDiseaseScreenProps> = ({ onTabCha
           </View>
 
           <View style={styles.treatmentSection}>
-            <Text style={styles.treatmentTitle}>Recommended Treatment</Text>
+            <Text style={styles.treatmentTitle}>{t('plantDisease.recommendedTreatment')}</Text>
             <Text style={styles.treatmentText}>{disease.treatment}</Text>
           </View>
 
           {disease.status === 'identified' && (
             <View style={styles.actionButtons}>
               <Button
-                title="Mark as Treated"
+                title={t('plantDisease.markTreated')}
                 variant="primary"
                 size="small"
                 onPress={() => updateTreatmentStatus(disease.id, 'treated')}
                 style={styles.actionButton}
               />
               <Button
-                title="Start Monitoring"
+                title={t('plantDisease.startMonitoring')}
                 variant="outline"
                 size="small"
                 onPress={() => updateTreatmentStatus(disease.id, 'monitoring')}
@@ -206,7 +268,7 @@ export const PlantDiseaseScreen: React.FC<PlantDiseaseScreenProps> = ({ onTabCha
           {disease.status === 'monitoring' && (
             <View style={styles.actionButtons}>
               <Button
-                title="Mark as Treated"
+                title={t('plantDisease.markTreated')}
                 variant="primary"
                 size="small"
                 onPress={() => updateTreatmentStatus(disease.id, 'treated')}
@@ -226,46 +288,117 @@ export const PlantDiseaseScreen: React.FC<PlantDiseaseScreenProps> = ({ onTabCha
         <View style={styles.headerContent}>
           <Bug size={32} color={theme.colors.primary} />
           <View style={styles.headerText}>
-            <Text style={styles.headerTitle}>Plant Disease Detection</Text>
+            <Text style={styles.headerTitle}>{t('plantDisease.title')}</Text>
             <Text style={styles.headerSubtitle}>
-              AI-powered plant disease identification and treatment recommendations
+              {t('plantDisease.subtitle')}
             </Text>
           </View>
         </View>
       </Card>
 
+      {/* Crop Selection */}
+      <Card style={styles.selectionCard}>
+        <Text style={styles.selectionTitle}>{t('plantDisease.selectCrop')}</Text>
+        <TouchableOpacity
+          style={styles.selectionButton}
+          onPress={handleCropSelection}
+        >
+          <View style={styles.selectionContent}>
+            <Text style={styles.selectionText}>
+              {selectedCrop ? selectedCrop.name : t('plantDisease.chooseCrop')}
+            </Text>
+            {selectedCrop && <Text style={styles.cropEmoji}>{selectedCrop.image}</Text>}
+          </View>
+        </TouchableOpacity>
+      </Card>
+
+      {/* Month Selection */}
+      {selectedCrop && (
+        <Card style={styles.selectionCard}>
+          <Text style={styles.selectionTitle}>{t('plantDisease.plantingMonth')}</Text>
+          <View style={styles.monthContainer}>
+            {selectedCrop?.months?.map((month: string) => (
+              <TouchableOpacity
+                key={month}
+                style={[
+                  styles.monthButton,
+                  selectedMonth === month && styles.selectedMonthButton
+                ]}
+                onPress={() => setSelectedMonth(month)}
+              >
+                <Text style={[
+                  styles.monthText,
+                  selectedMonth === month && styles.selectedMonthText
+                ]}>
+                  {month}
+                </Text>
+              </TouchableOpacity>
+            ))}
+          </View>
+        </Card>
+      )}
+
+      {/* Address Input */}
+      {selectedCrop && selectedMonth && (
+        <Card style={styles.selectionCard}>
+          <Text style={styles.selectionTitle}>{t('plantDisease.fullAddress')}</Text>
+          <TextInput
+            style={styles.addressInput}
+            placeholder={t('plantDisease.addressPlaceholder')}
+            value={address}
+            onChangeText={setAddress}
+            multiline
+            numberOfLines={3}
+            textAlignVertical="top"
+          />
+        </Card>
+      )}
+
       {/* Action Buttons */}
-      <View style={styles.actionButtonsContainer}>
-        <Button
-          title="Scan Plant Disease"
-          icon={Camera}
-          onPress={handleCameraCapture}
-          disabled={isScanning}
-          style={styles.scanButton}
-        />
-        <Button
-          title="Upload from Gallery"
-          icon={FileImage}
-          variant="outline"
-          onPress={uploadFromGallery}
-          disabled={isScanning}
-          style={styles.scanButton}
-        />
-      </View>
+      {selectedCrop && selectedMonth && address.trim() && (
+        <View style={styles.actionButtonsContainer}>
+          <Button
+            title={t('plantDisease.scanDisease')}
+            icon={Camera}
+            onPress={handleCameraCapture}
+            disabled={isScanning}
+            style={styles.scanButton}
+          />
+          <Button
+            title={t('plantDisease.uploadGallery')}
+            icon={FileImage}
+            variant="outline"
+            onPress={uploadFromGallery}
+            disabled={isScanning}
+            style={styles.scanButton}
+          />
+        </View>
+      )}
 
       {/* Instructions */}
       <Card style={styles.instructionsCard}>
-        <Text style={styles.instructionsTitle}>How to get the best results:</Text>
-        <Text style={styles.instructionItem}>1. Take a clear photo of the affected plant part</Text>
-        <Text style={styles.instructionItem}>2. Ensure good lighting and focus</Text>
-        <Text style={styles.instructionItem}>3. Include the diseased area in the frame</Text>
-        <Text style={styles.instructionItem}>4. Avoid blurry or low-quality images</Text>
-        <Text style={styles.instructionItem}>5. Capture multiple angles if needed</Text>
+        <Text style={styles.instructionsTitle}>{t('plantDisease.instructions')}</Text>
+        <Text style={styles.instructionItem}>1. {t('plantDisease.instruction1')}</Text>
+        <Text style={styles.instructionItem}>2. {t('plantDisease.instruction2')}</Text>
+        <Text style={styles.instructionItem}>3. {t('plantDisease.instruction3')}</Text>
+        <Text style={styles.instructionItem}>4. {t('plantDisease.instruction4')}</Text>
+        <Text style={styles.instructionItem}>5. {t('plantDisease.instruction5')}</Text>
       </Card>
 
       {/* Detection History */}
       <View style={styles.historySection}>
-        <Text style={styles.sectionTitle}>Detection History</Text>
+        <View style={styles.historySectionHeader}>
+          <Text style={styles.sectionTitle}>{t('plantDisease.detectionHistory')}</Text>
+          {reportData && (
+            <TouchableOpacity
+              style={styles.reportButton}
+              onPress={() => setShowReportModal(true)}
+            >
+              <Mail size={16} color={theme.colors.primary} />
+              <Text style={styles.reportButtonText}>{t('plantDisease.sendReport')}</Text>
+            </TouchableOpacity>
+          )}
+        </View>
         {state.plantDiseases.length > 0 ? (
           state.plantDiseases.map(disease => (
             <DiseaseCard key={disease.id} disease={disease} />
@@ -273,9 +406,9 @@ export const PlantDiseaseScreen: React.FC<PlantDiseaseScreenProps> = ({ onTabCha
         ) : (
           <Card style={styles.emptyState}>
             <Search size={48} color={theme.colors.textSecondary} />
-            <Text style={styles.emptyStateTitle}>No plant scans yet</Text>
+            <Text style={styles.emptyStateTitle}>{t('plantDisease.noScansYet')}</Text>
             <Text style={styles.emptyStateSubtitle}>
-              Take your first plant photo to get AI-powered disease detection
+              {t('plantDisease.firstScanPrompt')}
             </Text>
           </Card>
         )}
@@ -283,22 +416,107 @@ export const PlantDiseaseScreen: React.FC<PlantDiseaseScreenProps> = ({ onTabCha
 
       {/* Quick Actions */}
       <View style={styles.quickActions}>
-        <Text style={styles.sectionTitle}>Related Services</Text>
-        <TouchableOpacity 
+        <Text style={styles.sectionTitle}>{t('plantDisease.relatedServices')}</Text>
+        <TouchableOpacity
           style={styles.quickActionItem}
           onPress={() => onTabChange('store')}
         >
-          <Text style={styles.quickActionText}>Browse Fungicides</Text>
-          <Text style={styles.quickActionSubtext}>Find treatments for identified diseases</Text>
+          <Text style={styles.quickActionText}>{t('plantDisease.browseFungicides')}</Text>
+          <Text style={styles.quickActionSubtext}>{t('plantDisease.findTreatments')}</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
+        <TouchableOpacity
           style={styles.quickActionItem}
           onPress={() => onTabChange('soiltesting')}
         >
-          <Text style={styles.quickActionText}>Soil Testing</Text>
-          <Text style={styles.quickActionSubtext}>Check soil health for disease prevention</Text>
+          <Text style={styles.quickActionText}>{t('plantDisease.soilTesting')}</Text>
+          <Text style={styles.quickActionSubtext}>{t('plantDisease.soilHealthCheck')}</Text>
         </TouchableOpacity>
       </View>
+
+      {/* Crop Selection Modal */}
+      <Modal
+        visible={showCropSelection}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowCropSelection(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalTitle}>{t('plantDisease.cropSelection')}</Text>
+            <ScrollView style={styles.cropList}>
+              {crops.map((crop) => (
+                <TouchableOpacity
+                  key={crop.id}
+                  style={styles.cropItem}
+                  onPress={() => selectCrop(crop)}
+                >
+                  <Text style={styles.cropEmoji}>{crop.image}</Text>
+                  <Text style={styles.cropName}>{crop.name}</Text>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
+            <TouchableOpacity
+              style={styles.modalCloseButton}
+              onPress={() => setShowCropSelection(false)}
+            >
+              <Text style={styles.modalCloseText}>{t('common.cancel')}</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </Modal>
+
+      {/* Report Modal */}
+      <Modal
+        visible={showReportModal}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={() => setShowReportModal(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.reportModalContent}>
+            <Text style={styles.modalTitle}>{t('plantDisease.reportToSupport')}</Text>
+            {reportData && (
+              <View style={styles.reportDetails}>
+                <Text style={styles.reportDetailText}>
+                  <Text style={styles.reportLabel}>{t('plantDisease.crop')} </Text>
+                  {reportData.crop}
+                </Text>
+                <Text style={styles.reportDetailText}>
+                  <Text style={styles.reportLabel}>{t('plantDisease.disease')} </Text>
+                  {reportData.disease}
+                </Text>
+                <Text style={styles.reportDetailText}>
+                  <Text style={styles.reportLabel}>{t('plantDisease.severity')} </Text>
+                  {reportData.severity}
+                </Text>
+                <Text style={styles.reportDetailText}>
+                  <Text style={styles.reportLabel}>{t('plantDisease.month')} </Text>
+                  {reportData.month}
+                </Text>
+                <Text style={styles.reportDetailText}>
+                  <Text style={styles.reportLabel}>{t('plantDisease.address')} </Text>
+                  {reportData.address}
+                </Text>
+              </View>
+            )}
+            <View style={styles.reportModalButtons}>
+              <TouchableOpacity
+                style={styles.sendReportButton}
+                onPress={sendReportToSupport}
+              >
+                <Send size={16} color="white" />
+                <Text style={styles.sendReportText}>{t('plantDisease.sendReport')}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.modalCloseButton}
+                onPress={() => setShowReportModal(false)}
+              >
+                <Text style={styles.modalCloseText}>{t('common.cancel')}</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
     </ScrollView>
   );
 };
@@ -470,5 +688,178 @@ const styles = StyleSheet.create({
   quickActionSubtext: {
     fontSize: theme.typography.sizes.sm,
     color: theme.colors.textSecondary,
+  },
+  // New styles for crop selection and other features
+  selectionCard: {
+    margin: theme.spacing.md,
+    marginTop: 0,
+  },
+  selectionTitle: {
+    fontSize: theme.typography.sizes.md,
+    fontWeight: theme.typography.weights.bold as any,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
+  },
+  selectionButton: {
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.surface,
+  },
+  selectionContent: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+  },
+  selectionText: {
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.text,
+  },
+  cropEmoji: {
+    fontSize: 24,
+  },
+  monthContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: theme.spacing.sm,
+  },
+  monthButton: {
+    paddingHorizontal: theme.spacing.md,
+    paddingVertical: theme.spacing.sm,
+    borderRadius: theme.borderRadius.md,
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    backgroundColor: theme.colors.surface,
+  },
+  selectedMonthButton: {
+    backgroundColor: theme.colors.primary,
+    borderColor: theme.colors.primary,
+  },
+  monthText: {
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.text,
+  },
+  selectedMonthText: {
+    color: 'white',
+    fontWeight: theme.typography.weights.semibold as any,
+  },
+  addressInput: {
+    borderWidth: 1,
+    borderColor: theme.colors.border,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.md,
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.text,
+    backgroundColor: theme.colors.surface,
+    minHeight: 80,
+  },
+  historySectionHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: theme.spacing.md,
+  },
+  reportButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'rgba(34, 197, 94, 0.1)',
+    paddingHorizontal: theme.spacing.sm,
+    paddingVertical: theme.spacing.xs,
+    borderRadius: theme.borderRadius.md,
+  },
+  reportButtonText: {
+    fontSize: theme.typography.sizes.sm,
+    color: theme.colors.primary,
+    marginLeft: theme.spacing.xs,
+    fontWeight: theme.typography.weights.semibold as any,
+  },
+  // Modal styles
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  modalContent: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.md,
+    width: '90%',
+    maxHeight: '80%',
+  },
+  modalTitle: {
+    fontSize: theme.typography.sizes.lg,
+    fontWeight: theme.typography.weights.bold as any,
+    color: theme.colors.text,
+    textAlign: 'center',
+    marginBottom: theme.spacing.md,
+  },
+  cropList: {
+    maxHeight: 400,
+  },
+  cropItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    padding: theme.spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: theme.colors.border,
+  },
+  cropName: {
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.text,
+    marginLeft: theme.spacing.md,
+  },
+  modalCloseButton: {
+    marginTop: theme.spacing.md,
+    padding: theme.spacing.md,
+    backgroundColor: theme.colors.border,
+    borderRadius: theme.borderRadius.lg,
+    alignItems: 'center',
+  },
+  modalCloseText: {
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.text,
+    fontWeight: theme.typography.weights.semibold as any,
+  },
+  // Report modal styles
+  reportModalContent: {
+    backgroundColor: theme.colors.surface,
+    borderRadius: theme.borderRadius.lg,
+    padding: theme.spacing.md,
+    width: '90%',
+    maxWidth: 400,
+  },
+  reportDetails: {
+    marginBottom: theme.spacing.md,
+  },
+  reportDetailText: {
+    fontSize: theme.typography.sizes.md,
+    color: theme.colors.text,
+    marginBottom: theme.spacing.sm,
+    lineHeight: 22,
+  },
+  reportLabel: {
+    fontWeight: theme.typography.weights.bold as any,
+    color: theme.colors.primary,
+  },
+  reportModalButtons: {
+    flexDirection: 'row',
+    gap: theme.spacing.sm,
+  },
+  sendReportButton: {
+    flex: 1,
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    backgroundColor: theme.colors.primary,
+    padding: theme.spacing.md,
+    borderRadius: theme.borderRadius.lg,
+    gap: theme.spacing.xs,
+  },
+  sendReportText: {
+    fontSize: theme.typography.sizes.md,
+    color: 'white',
+    fontWeight: theme.typography.weights.semibold as any,
   },
 });

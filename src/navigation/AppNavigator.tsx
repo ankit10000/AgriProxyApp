@@ -1,39 +1,80 @@
-import React, { useState } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
-import { Home, Store, ShoppingCart, User, Bell, FlaskConical, Bug, Calendar } from 'lucide-react-native';
-import { HomeScreen } from '../screens/Home/HomeScreen';
-import { StoreScreen } from '../screens/Store/StoreScreen';
-import { SoilTestingScreen } from '../screens/SoilTesting/SoilTestingScreen';
-import { PlantDiseaseScreen } from '../screens/PlantDisease/PlantDiseaseScreen';
-import { Header } from '../components/ui/Header';
-import { useApp } from '../context/AppContext';
-import { theme } from '../styles/theme';
-import { TabName } from '../types';
+import React, { useState } from "react";
+import {
+  View,
+  Text,
+  TouchableOpacity,
+  StyleSheet,
+  SafeAreaView,
+  ScrollView,
+} from "react-native";
+import {
+  Home,
+  Store,
+  ShoppingCart,
+  User,
+  Bell,
+  FlaskConical,
+  Bug,
+  Calendar,
+} from "lucide-react-native";
+import { Image } from "react-native";
+import { HomeScreen } from "../screens/Home/HomeScreen";
+import { StoreScreen } from "../screens/Store/StoreScreen";
+import { CartScreen } from "../screens/Store/CartScreen";
+import { SoilTestingScreen } from "../screens/SoilTesting/SoilTestingScreen";
+import { PlantDiseaseScreen } from "../screens/PlantDisease/PlantDiseaseScreen";
+import { Header } from "../components/ui/Header";
+import { useApp } from "../context/AppContext";
+import { useLocalization } from "../context/LocalizationContext";
+import { theme } from "../styles/theme";
+import { TabName } from "../types";
 
 // Placeholder screens for missing tabs
-const ProfileScreen = ({ onTabChange }: { onTabChange: (tab: TabName) => void }) => (
-  <View style={styles.placeholderContainer}>
-    <User size={48} color={theme.colors.textSecondary} />
-    <Text style={styles.placeholderTitle}>Profile</Text>
-    <Text style={styles.placeholderSubtitle}>User profile coming soon</Text>
-  </View>
-);
+const ProfileScreen = ({
+  onTabChange,
+}: {
+  onTabChange: (tab: TabName) => void;
+}) => {
+  const { t } = useLocalization();
+  return (
+    <View style={styles.placeholderContainer}>
+      <User size={48} color={theme.colors.textSecondary} />
+      <Text style={styles.placeholderTitle}>{t('profile.title')}</Text>
+      <Text style={styles.placeholderSubtitle}>{t('placeholders.userProfileSoon')}</Text>
+    </View>
+  );
+};
 
-const NotificationsScreen = ({ onTabChange }: { onTabChange: (tab: TabName) => void }) => {
+const NotificationsScreen = ({
+  onTabChange,
+}: {
+  onTabChange: (tab: TabName) => void;
+}) => {
   const { state } = useApp();
-  
+  const { t } = useLocalization();
+
   return (
     <ScrollView style={styles.notificationsContainer}>
       <View style={styles.notificationsHeader}>
-        <Text style={styles.notificationsTitle}>Notifications</Text>
-        <Text style={styles.notificationsSubtitle}>Stay updated with your farm</Text>
+        <Text style={styles.notificationsTitle}>{t('notifications.title')}</Text>
+        <Text style={styles.notificationsSubtitle}>
+          {t('notifications.subtitle')}
+        </Text>
       </View>
-      
+
       {state.notifications.map((notification) => (
-        <View key={notification.id} style={[styles.notificationCard, !notification.read && styles.unreadNotification]}>
+        <View
+          key={notification.id}
+          style={[
+            styles.notificationCard,
+            !notification.read && styles.unreadNotification,
+          ]}
+        >
           <View style={styles.notificationContent}>
             <Text style={styles.notificationTitle}>{notification.title}</Text>
-            <Text style={styles.notificationMessage}>{notification.message}</Text>
+            <Text style={styles.notificationMessage}>
+              {notification.message}
+            </Text>
             <Text style={styles.notificationTime}>{notification.time}</Text>
           </View>
           {!notification.read && <View style={styles.unreadDot} />}
@@ -43,24 +84,36 @@ const NotificationsScreen = ({ onTabChange }: { onTabChange: (tab: TabName) => v
   );
 };
 
-const CalendarScreen = ({ onTabChange }: { onTabChange: (tab: TabName) => void }) => (
-  <View style={styles.placeholderContainer}>
-    <Calendar size={48} color={theme.colors.textSecondary} />
-    <Text style={styles.placeholderTitle}>Crop Calendar</Text>
-    <Text style={styles.placeholderSubtitle}>Calendar feature coming soon</Text>
-  </View>
-);
+const CalendarScreen = ({
+  onTabChange,
+}: {
+  onTabChange: (tab: TabName) => void;
+}) => {
+  const { t } = useLocalization();
+  return (
+    <View style={styles.placeholderContainer}>
+      <Calendar size={48} color={theme.colors.textSecondary} />
+      <Text style={styles.placeholderTitle}>{t('navigation.calendar')}</Text>
+      <Text style={styles.placeholderSubtitle}>{t('placeholders.calendarFeatureSoon')}</Text>
+    </View>
+  );
+};
 
-const CartScreen = ({ onTabChange }: { onTabChange: (tab: TabName) => void }) => (
-  <View style={styles.placeholderContainer}>
-    <ShoppingCart size={48} color={theme.colors.textSecondary} />
-    <Text style={styles.placeholderTitle}>Cart</Text>
-    <Text style={styles.placeholderSubtitle}>Shopping cart coming soon</Text>
-  </View>
+const AgriIcon = ({ size, color }: { size: number; color: string }) => (
+  <Image
+    source={require("../../assets/Iconapp.png")}
+    style={{
+      width: size,
+      height: size,
+      tintColor: color,
+    }}
+    resizeMode="contain"
+  />
 );
 
 const AppNavigator = () => {
-  const [activeTab, setActiveTab] = useState<TabName>('home');
+  const [activeTab, setActiveTab] = useState<TabName>("home");
+  const { t } = useLocalization();
 
   const handleTabChange = (tab: TabName) => {
     setActiveTab(tab);
@@ -68,42 +121,60 @@ const AppNavigator = () => {
 
   const renderCurrentScreen = () => {
     switch (activeTab) {
-      case 'home':
+      case "home":
         return <HomeScreen onTabChange={handleTabChange} />;
-      case 'store':
+      case "store":
         return <StoreScreen onTabChange={handleTabChange} />;
-      case 'soiltesting':
+      case "soiltesting":
         return <SoilTestingScreen onTabChange={handleTabChange} />;
-      case 'plantdisease':
+      case "plantdisease":
         return <PlantDiseaseScreen onTabChange={handleTabChange} />;
-      case 'profile':
+      case "profile":
         return <ProfileScreen onTabChange={handleTabChange} />;
-      case 'notifications':
+      case "notifications":
         return <NotificationsScreen onTabChange={handleTabChange} />;
-      case 'calendar':
+      case "calendar":
         return <CalendarScreen onTabChange={handleTabChange} />;
-      case 'cart':
+      case "cart":
         return <CartScreen onTabChange={handleTabChange} />;
       default:
         return <HomeScreen onTabChange={handleTabChange} />;
     }
   };
 
-  const TabButton = ({ tab, icon: Icon, label }: { tab: TabName; icon: any; label: string }) => {
+  const TabButton = ({
+    tab,
+    icon: Icon,
+    label,
+  }: {
+    tab: TabName;
+    icon: any;
+    label: string;
+  }) => {
+    const { state } = useApp();
     const isActive = activeTab === tab;
+    const cartItemCount = state.cart.reduce(
+      (count, item) => count + item.quantity,
+      0
+    );
+
     return (
       <TouchableOpacity
         style={[styles.tabButton, isActive && styles.activeTabButton]}
         onPress={() => handleTabChange(tab)}
       >
-        <Icon 
-          size={isActive ? 24 : 20} 
-          color={isActive ? theme.colors.primary : theme.colors.textSecondary} 
-        />
-        <Text style={[
-          styles.tabLabel, 
-          isActive && styles.activeTabLabel
-        ]}>
+        <View style={styles.tabIconContainer}>
+          <Icon
+            size={isActive ? 24 : 20}
+            color={isActive ? theme.colors.primary : theme.colors.textSecondary}
+          />
+          {tab === "cart" && cartItemCount > 0 && (
+            <View style={styles.tabBadge}>
+              <Text style={styles.tabBadgeText}>{cartItemCount}</Text>
+            </View>
+          )}
+        </View>
+        <Text style={[styles.tabLabel, isActive && styles.activeTabLabel]}>
           {label}
         </Text>
       </TouchableOpacity>
@@ -113,16 +184,22 @@ const AppNavigator = () => {
   return (
     <SafeAreaView style={styles.container}>
       <Header onTabChange={handleTabChange} />
-      <View style={styles.screenContainer}>
-        {renderCurrentScreen()}
-      </View>
-      
+      <View style={styles.screenContainer}>{renderCurrentScreen()}</View>
+
       <View style={styles.tabBar}>
-        <TabButton tab="home" icon={Home} label="Home" />
-        <TabButton tab="store" icon={Store} label="Store" />
-        <TabButton tab="soiltesting" icon={FlaskConical} label="Soil" />
-        <TabButton tab="plantdisease" icon={Bug} label="Plant Disease" />
-        <TabButton tab="profile" icon={User} label="Profile" />
+        <TabButton tab="home" icon={Home} label={t('navigation.home')} />
+        <TabButton
+          tab="soiltesting"
+          icon={FlaskConical}
+          label={t('navigation.soilTesting')}
+        />
+        <TabButton
+          tab="plantdisease"
+          icon={Bug}
+          label={t('navigation.plantDisease')}
+        />
+        <TabButton tab="store" icon={Store} label={t('navigation.store')} />
+        <TabButton tab="profile" icon={User} label={t('navigation.profile')} />
       </View>
     </SafeAreaView>
   );
@@ -137,7 +214,7 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   tabBar: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: theme.colors.surface,
     borderTopWidth: 1,
     borderTopColor: theme.colors.border,
@@ -147,18 +224,40 @@ const styles = StyleSheet.create({
   },
   tabButton: {
     flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     paddingVertical: 4,
   },
   activeTabButton: {
     // Additional styling for active tab if needed
+  },
+  tabIconContainer: {
+    position: "relative",
+  },
+  tabBadge: {
+    position: "absolute",
+    top: -8,
+    right: -8,
+    backgroundColor: theme.colors.error,
+    borderRadius: 10,
+    minWidth: 20,
+    height: 20,
+    justifyContent: "center",
+    alignItems: "center",
+    paddingHorizontal: 4,
+  },
+  tabBadgeText: {
+    color: "white",
+    fontSize: theme.typography.sizes.xs,
+    fontWeight: theme.typography.weights.bold as any,
   },
   tabLabel: {
     fontSize: theme.typography.sizes.xs,
     fontWeight: theme.typography.weights.medium as any,
     color: theme.colors.textSecondary,
     marginTop: 2,
+    textAlign: "center",
+    lineHeight: 14,
   },
   activeTabLabel: {
     color: theme.colors.primary,
@@ -166,8 +265,8 @@ const styles = StyleSheet.create({
   },
   placeholderContainer: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
+    justifyContent: "center",
+    alignItems: "center",
     backgroundColor: theme.colors.surface,
     padding: theme.spacing.xl,
   },
@@ -181,7 +280,7 @@ const styles = StyleSheet.create({
   placeholderSubtitle: {
     fontSize: theme.typography.sizes.md,
     color: theme.colors.textSecondary,
-    textAlign: 'center',
+    textAlign: "center",
   },
   // Notifications Screen Styles
   notificationsContainer: {
@@ -205,7 +304,7 @@ const styles = StyleSheet.create({
     color: theme.colors.textSecondary,
   },
   notificationCard: {
-    flexDirection: 'row',
+    flexDirection: "row",
     backgroundColor: theme.colors.surface,
     marginHorizontal: theme.spacing.md,
     marginVertical: theme.spacing.xs,
@@ -214,7 +313,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: theme.colors.border,
     elevation: 1,
-    shadowColor: '#000',
+    shadowColor: "#000",
     shadowOffset: { width: 0, height: 1 },
     shadowOpacity: 0.05,
     shadowRadius: 2,
@@ -222,7 +321,7 @@ const styles = StyleSheet.create({
   unreadNotification: {
     borderLeftWidth: 4,
     borderLeftColor: theme.colors.primary,
-    backgroundColor: 'rgba(34, 197, 94, 0.05)',
+    backgroundColor: "rgba(34, 197, 94, 0.05)",
   },
   notificationContent: {
     flex: 1,

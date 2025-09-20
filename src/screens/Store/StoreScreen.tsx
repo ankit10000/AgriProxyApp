@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { Filter, Star, ShoppingCart, Leaf, Heart } from 'lucide-react-native';
 import { useApp } from '../../context/AppContext';
+import { useLocalization } from '../../context/LocalizationContext';
 import { useSearch } from '../../hooks/useSearch';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
@@ -18,6 +19,7 @@ interface StoreScreenProps {
 
 export const StoreScreen: React.FC<StoreScreenProps> = ({ onTabChange }) => {
   const { state, dispatch } = useApp();
+  const { t } = useLocalization();
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [showFilters, setShowFilters] = useState(false);
   const { searchQuery, setSearchQuery, debouncedSearch } = useSearch();
@@ -42,8 +44,13 @@ export const StoreScreen: React.FC<StoreScreenProps> = ({ onTabChange }) => {
     return state.favorites.includes(productId);
   };
 
-  const CategoryFilter: React.FC = () => (
-    <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.categoryFilter}>
+  const CategoryFilter = () => (
+    <ScrollView 
+      horizontal 
+      showsHorizontalScrollIndicator={false} 
+      style={styles.categoryFilter}
+      contentContainerStyle={styles.categoryFilterContent}
+    >
       {PRODUCT_CATEGORIES.map(category => (
         <TouchableOpacity
           key={category}
@@ -95,12 +102,12 @@ export const StoreScreen: React.FC<StoreScreenProps> = ({ onTabChange }) => {
           <View style={styles.priceContainer}>
             <Text style={styles.productPrice}>{formatPrice(product.price)}</Text>
             {!product.inStock && (
-              <Badge variant="error" size="small">Out of Stock</Badge>
+              <Badge variant="error" size="small">{t('store.outOfStock')}</Badge>
             )}
           </View>
           
           <Button
-            title="Add to Cart"
+            title={t('store.addToCart')}
             size="small"
             onPress={() => addToCart(product)}
             disabled={!product.inStock}
@@ -115,8 +122,8 @@ export const StoreScreen: React.FC<StoreScreenProps> = ({ onTabChange }) => {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <Text style={styles.headerTitle}>AgriProxy Store</Text>
-        <Text style={styles.headerSubtitle}>Quality products for better yields</Text>
+        <Text style={styles.headerTitle}>{t('store.title')}</Text>
+        <Text style={styles.headerSubtitle}>{t('placeholders.qualityProducts')}</Text>
       </View>
 
       {/* Search Bar */}
@@ -125,7 +132,7 @@ export const StoreScreen: React.FC<StoreScreenProps> = ({ onTabChange }) => {
           <SearchBar
             searchQuery={searchQuery}
             onSearchChange={setSearchQuery}
-            placeholder="Search products..."
+            placeholder={t('store.searchProducts')}
           />
         </View>
         <TouchableOpacity
@@ -161,7 +168,7 @@ export const StoreScreen: React.FC<StoreScreenProps> = ({ onTabChange }) => {
         {filteredProducts.length === 0 && (
           <Card style={styles.emptyState}>
             <ShoppingCart size={48} color={theme.colors.textSecondary} />
-            <Text style={styles.emptyStateTitle}>No products found</Text>
+            <Text style={styles.emptyStateTitle}>{t('placeholders.noProductsFound')}</Text>
             <Text style={styles.emptyStateSubtitle}>
               {debouncedSearch 
                 ? `No products match "${debouncedSearch}"`
@@ -170,7 +177,7 @@ export const StoreScreen: React.FC<StoreScreenProps> = ({ onTabChange }) => {
             </Text>
             {debouncedSearch && (
               <Button
-                title="Clear Search"
+                title={t('cart.clearSearch')}
                 variant="outline"
                 size="small"
                 onPress={() => setSearchQuery('')}
@@ -242,17 +249,22 @@ const styles = StyleSheet.create({
   },
   categoryFilter: {
     paddingLeft: theme.spacing.md,
-    marginBottom: theme.spacing.md,
+    maxHeight: 50,
+    minHeight: 50,
+  },
+  categoryFilterContent: {
+    alignItems: 'center',
+    paddingVertical: 2,
   },
   categoryButton: {
     backgroundColor: theme.colors.surface,
     paddingHorizontal: theme.spacing.md,
-    paddingVertical: theme.spacing.sm,
-    borderRadius: theme.borderRadius.xl,
+    paddingVertical: 2,
+    borderRadius: theme.borderRadius.lg,
     marginRight: theme.spacing.sm,
     borderWidth: 1,
     borderColor: theme.colors.border,
-    height: theme.typography.sizes.xxl
+    height: 30,
   },
   selectedCategoryButton: {
     backgroundColor: theme.colors.primary,

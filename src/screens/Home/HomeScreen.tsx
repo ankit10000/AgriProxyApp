@@ -2,6 +2,7 @@ import React from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
 import { Camera, Search, Calendar, TrendingUp, Leaf, ShoppingCart, MapPin } from 'lucide-react-native';
 import { useApp } from '../../context/AppContext';
+import { useLocalization } from '../../context/LocalizationContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { theme } from '../../styles/theme';
@@ -14,6 +15,7 @@ interface HomeScreenProps {
 
 export const HomeScreen: React.FC<HomeScreenProps> = ({ onTabChange }) => {
   const { state } = useApp();
+  const { t } = useLocalization();
 
   const QuickActionCard: React.FC<{
     icon: React.ComponentType<any>;
@@ -66,8 +68,8 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onTabChange }) => {
     <ScrollView style={styles.container}>
       {/* Welcome Section */}
       <Card style={styles.welcomeSection}>
-        <Text style={styles.welcomeTitle}>Welcome back, {state.user.name}! 🌱</Text>
-        <Text style={styles.welcomeSubtitle}>Your crop's best friend for better yields</Text>
+        <Text style={styles.welcomeTitle}>{t('home.welcomeBack')}, {state.user.name}! 🌱</Text>
+        <Text style={styles.welcomeSubtitle}>{t('home.welcomeMessage')}</Text>
       </Card>
 
       {/* Quick Actions */}
@@ -75,15 +77,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onTabChange }) => {
         <View style={styles.quickActionsRow}>
           <QuickActionCard
             icon={Camera}
-            title="Soil Testing"
-            subtitle="Get results in 90 seconds"
+            title={t('home.soilTesting')}
+            subtitle={t('home.soilTestingSubtitle')}
             color={theme.colors.primary}
             onPress={() => onTabChange('soiltesting')}
           />
           <QuickActionCard
             icon={Search}
-            title="Pest Detection"
-            subtitle="AI-powered identification"
+            title={t('home.pestDetection')}
+            subtitle={t('home.pestDetectionSubtitle')}
             color="#dc2626"
             onPress={() => onTabChange('plantdisease')}
           />
@@ -91,15 +93,15 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onTabChange }) => {
         <View style={styles.quickActionsRow}>
           <QuickActionCard
             icon={Calendar}
-            title="Crop Calendar"
-            subtitle="Plan your farming schedule"
+            title={t('home.cropCalendar')}
+            subtitle={t('home.cropCalendarSubtitle')}
             color="#2563eb"
             onPress={() => onTabChange('calendar')}
           />
           <QuickActionCard
             icon={TrendingUp}
-            title="Mandi Rates"
-            subtitle="Live market prices"
+            title={t('home.mandiRates')}
+            subtitle={t('home.mandiRatesSubtitle')}
             color="#7c3aed"
             onPress={() => {}}
           />
@@ -108,23 +110,23 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onTabChange }) => {
 
       {/* Features Section */}
       <View style={styles.featuresSection}>
-        <Text style={styles.sectionTitle}>Our Services</Text>
+        <Text style={styles.sectionTitle}>{t('home.ourServices')}</Text>
         <FeatureCard
           icon={Leaf}
-          title="Crop Advisory"
-          description="Get expert advice on crop protection, fertilizers, and farming techniques from our agricultural specialists."
+          title={t('home.cropAdvisory')}
+          description={t('home.cropAdvisoryDesc')}
           color={theme.colors.secondary}
         />
         <FeatureCard
           icon={ShoppingCart}
-          title="AgriProxy Store"
-          description="Quality pesticides, fungicides, and biopesticides delivered to your doorstep with fast delivery."
+          title={t('home.agriProxyStore')}
+          description={t('home.agriProxyStoreDesc')}
           color={theme.colors.primary}
         />
         <FeatureCard
           icon={MapPin}
-          title="Drone Spraying"
-          description="Professional drone spraying services for precise application, completed in just 6-7 minutes per acre."
+          title={t('home.droneSpraying')}
+          description={t('home.droneSprayingDesc')}
           color="#2563eb"
         />
       </View>
@@ -132,9 +134,9 @@ export const HomeScreen: React.FC<HomeScreenProps> = ({ onTabChange }) => {
       {/* Featured Products */}
       <View style={styles.productsSection}>
         <View style={styles.sectionHeader}>
-          <Text style={styles.sectionTitle}>Featured Products</Text>
+          <Text style={styles.sectionTitle}>{t('home.featuredProducts')}</Text>
           <Button
-            title="View All"
+            title={t('home.viewAll')}
             variant="ghost"
             size="small"
             onPress={() => onTabChange('store')}

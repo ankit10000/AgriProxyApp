@@ -1,5 +1,7 @@
-import React, { createContext, useContext, useReducer, ReactNode } from 'react';
+import React, { createContext, useContext, useReducer, ReactNode, useEffect } from 'react';
 import { User, Product, CartItem, Crop, Notification, SoilTest, PlantDisease } from '../types';
+import { useLocalization } from './LocalizationContext';
+import { getLocalizedProducts, getLocalizedNotifications, getLocalizedSoilTests, getLocalizedPlantDiseases } from '../utils/localizedData';
 
 // Initial State
 interface AppState {
@@ -16,18 +18,21 @@ interface AppState {
 }
 
 // Actions
-type AppAction = 
+type AppAction =
   | { type: 'SET_LOADING'; payload: boolean }
   | { type: 'SET_ERROR'; payload: string | null }
   | { type: 'ADD_TO_CART'; payload: Product }
   | { type: 'REMOVE_FROM_CART'; payload: number }
+  | { type: 'UPDATE_CART_QUANTITY'; payload: { productId: number; quantity: number } }
+  | { type: 'CLEAR_CART' }
   | { type: 'TOGGLE_FAVORITE'; payload: number }
   | { type: 'UPDATE_USER'; payload: Partial<User> }
   | { type: 'ADD_SOIL_TEST'; payload: SoilTest }
   | { type: 'UPDATE_SOIL_TEST'; payload: SoilTest }
   | { type: 'ADD_PLANT_DISEASE'; payload: PlantDisease }
   | { type: 'UPDATE_PLANT_DISEASE'; payload: PlantDisease }
-  | { type: 'MARK_NOTIFICATION_READ'; payload: number };
+  | { type: 'MARK_NOTIFICATION_READ'; payload: number }
+  | { type: 'UPDATE_LOCALIZED_DATA'; payload: { products: Product[]; notifications: Notification[]; soilTests: SoilTest[]; plantDiseases: PlantDisease[] } };
 
 // Initial state
 const initialState: AppState = {
@@ -134,6 +139,22 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         ...state,
         cart: state.cart.filter(item => item.id !== action.payload)
       };
+
+    case 'UPDATE_CART_QUANTITY':
+      return {
+        ...state,
+        cart: state.cart.map(item =>
+          item.id === action.payload.productId
+            ? { ...item, quantity: action.payload.quantity }
+            : item
+        ).filter(item => item.quantity > 0)
+      };
+
+    case 'CLEAR_CART':
+      return {
+        ...state,
+        cart: []
+      };
     
     case 'TOGGLE_FAVORITE':
       const isFavorite = state.favorites.includes(action.payload);
@@ -187,7 +208,16 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
             : notification
         )
       };
-    
+
+    case 'UPDATE_LOCALIZED_DATA':
+      return {
+        ...state,
+        products: action.payload.products,
+        notifications: action.payload.notifications,
+        soilTests: action.payload.soilTests,
+        plantDiseases: action.payload.plantDiseases
+      };
+
     default:
       return state;
   }
@@ -200,6 +230,8 @@ interface AppContextType {
   // Helper functions
   addToCart: (product: Product) => void;
   removeFromCart: (productId: number) => void;
+  updateCartQuantity: (productId: number, quantity: number) => void;
+  clearCart: () => void;
   toggleFavorite: (productId: number) => void;
   updateUser: (userData: Partial<User>) => void;
   addSoilTest: (test: SoilTest) => void;
@@ -216,6 +248,20 @@ interface AppProviderProps {
 
 export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
   const [state, dispatch] = useReducer(appReducer, initialState);
+  const { t, language } = useLocalization();
+
+  // Update localized data whenever language changes
+  useEffect(() => {
+    const products = getLocalizedProducts(t);
+    const notifications = getLocalizedNotifications(t);
+    const soilTests = getLocalizedSoilTests(t);
+    const plantDiseases = getLocalizedPlantDiseases(t);
+
+    dispatch({
+      type: 'UPDATE_LOCALIZED_DATA',
+      payload: { products, notifications, soilTests, plantDiseases }
+    });
+  }, [language, t]);
 
   const addToCart = (product: Product) => {
     dispatch({ type: 'ADD_TO_CART', payload: product });
@@ -223,6 +269,14 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
 
   const removeFromCart = (productId: number) => {
     dispatch({ type: 'REMOVE_FROM_CART', payload: productId });
+  };
+
+  const updateCartQuantity = (productId: number, quantity: number) => {
+    dispatch({ type: 'UPDATE_CART_QUANTITY', payload: { productId, quantity } });
+  };
+
+  const clearCart = () => {
+    dispatch({ type: 'CLEAR_CART' });
   };
 
   const toggleFavorite = (productId: number) => {
@@ -250,6 +304,8 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     dispatch,
     addToCart,
     removeFromCart,
+    updateCartQuantity,
+    clearCart,
     toggleFavorite,
     updateUser,
     addSoilTest,

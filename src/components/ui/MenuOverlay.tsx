@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Alert, Pressable } from 'react-native';
 import { X, Settings, HelpCircle, Info, LogOut } from 'lucide-react-native';
+import { useLocalization } from '../../context/LocalizationContext';
 import { theme } from '../../styles/theme';
 
 interface MenuOverlayProps {
@@ -9,6 +10,7 @@ interface MenuOverlayProps {
 }
 
 export const MenuOverlay: React.FC<MenuOverlayProps> = ({ showMenu, onClose }) => {
+  const { t } = useLocalization();
   const handleLogout = () => {
     Alert.alert(
       'Logout',

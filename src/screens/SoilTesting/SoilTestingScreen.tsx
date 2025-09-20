@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import { Camera, FlaskConical, Activity, AlertTriangle, CheckCircle2, Clock, FileImage } from 'lucide-react-native';
 import { useApp } from '../../context/AppContext';
+import { useLocalization } from '../../context/LocalizationContext';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
@@ -15,6 +16,7 @@ interface SoilTestingScreenProps {
 
 export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChange }) => {
   const { state, dispatch } = useApp();
+  const { t } = useLocalization();
   const [isUploading, setIsUploading] = useState(false);
 
   const handleCameraCapture = () => {
@@ -22,9 +24,9 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
       'Capture Soil Sample',
       'Choose how you want to capture your soil sample:',
       [
-        { text: 'Take Photo', onPress: () => capturePhoto() },
-        { text: 'Upload from Gallery', onPress: () => uploadFromGallery() },
-        { text: 'Cancel', style: 'cancel' }
+        { text: t('plantDisease.takePhoto'), onPress: () => capturePhoto() },
+        { text: t('plantDisease.uploadFromGallery'), onPress: () => uploadFromGallery() },
+        { text: t('common.cancel'), style: 'cancel' }
       ]
     );
   };
@@ -142,7 +144,7 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
       {test.status === 'completed' && (
         <>
           <View style={styles.testResults}>
-            <Text style={styles.resultsTitle}>Test Results</Text>
+            <Text style={styles.resultsTitle}>{t('placeholders.testResults')}</Text>
             
             <View style={styles.nutrientRow}>
               <Text style={styles.nutrientLabel}>pH Level:</Text>
@@ -173,7 +175,7 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
 
           {test.recommendations && test.recommendations.length > 0 && (
             <View style={styles.recommendations}>
-              <Text style={styles.recommendationsTitle}>Recommendations</Text>
+              <Text style={styles.recommendationsTitle}>{t('placeholders.recommendations')}</Text>
               {test.recommendations.map((rec: string, index: number) => (
                 <Text key={index} style={styles.recommendationItem}>
                   • {rec}
@@ -213,14 +215,14 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
       {/* Action Buttons */}
       <View style={styles.actionButtons}>
         <Button
-          title="Take Soil Photo"
+          title={t('placeholders.takeSoilPhoto')}
           icon={Camera}
           onPress={handleCameraCapture}
           disabled={isUploading}
           style={styles.actionButton}
         />
         <Button
-          title="Upload from Gallery"
+          title={t('placeholders.uploadFromGallery')}
           icon={FileImage}
           variant="outline"
           onPress={uploadFromGallery}
@@ -231,11 +233,11 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
 
       {/* Instructions */}
       <Card style={styles.instructionsCard}>
-        <Text style={styles.instructionsTitle}>How to take a good soil sample:</Text>
-        <Text style={styles.instructionItem}>1. Clear the surface of debris and vegetation</Text>
-        <Text style={styles.instructionItem}>2. Dig 6-8 inches deep to collect soil</Text>
-        <Text style={styles.instructionItem}>3. Take a clear photo with good lighting</Text>
-        <Text style={styles.instructionItem}>4. Ensure soil fills most of the frame</Text>
+        <Text style={styles.instructionsTitle}>{t('placeholders.howToTakeSoilSample')}</Text>
+        <Text style={styles.instructionItem}>{t('placeholders.soilInstruction1')}</Text>
+        <Text style={styles.instructionItem}>{t('placeholders.soilInstruction2')}</Text>
+        <Text style={styles.instructionItem}>{t('placeholders.soilInstruction3')}</Text>
+        <Text style={styles.instructionItem}>{t('placeholders.soilInstruction4')}</Text>
       </Card>
 
       {/* Test History */}
@@ -248,7 +250,7 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
         ) : (
           <Card style={styles.emptyState}>
             <FlaskConical size={48} color={theme.colors.textSecondary} />
-            <Text style={styles.emptyStateTitle}>No soil tests yet</Text>
+            <Text style={styles.emptyStateTitle}>{t('placeholders.noSoilTestsYet')}</Text>
             <Text style={styles.emptyStateSubtitle}>
               Take your first soil photo to get started with soil analysis
             </Text>
@@ -263,8 +265,8 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
           style={styles.quickActionItem}
           onPress={() => onTabChange('store')}
         >
-          <Text style={styles.quickActionText}>Browse Fertilizers</Text>
-          <Text style={styles.quickActionSubtext}>Based on your soil needs</Text>
+          <Text style={styles.quickActionText}>{t('placeholders.browseFertilizers')}</Text>
+          <Text style={styles.quickActionSubtext}>{t('placeholders.basedOnSoilNeeds')}</Text>
         </TouchableOpacity>
         <TouchableOpacity 
           style={styles.quickActionItem}
