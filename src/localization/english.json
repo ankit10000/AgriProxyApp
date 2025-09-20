@@ -41,7 +41,8 @@
     "signupError": "Sign up failed",
     "invalidEmail": "Invalid email address",
     "passwordMismatch": "Passwords do not match",
-    "requiredField": "This field is required"
+    "requiredField": "This field is required",
+    "confirmLogout": "Are you sure you want to logout?"
   },
   "home": {
     "welcome": "Welcome",
@@ -70,6 +71,8 @@
   },
   "plantDisease": {
     "title": "Plant Disease Detection",
+    "getInstantSoilAnalysis": "Get instant soil analysis results in just 90 seconds",
+    "takeFirstSoilPhoto": "Take your first soil photo to get started with soil analysis",
     "subtitle": "AI-powered plant disease identification and treatment recommendations",
     "selectCrop": "Select Crop",
     "chooseCrop": "Choose your crop",
@@ -114,7 +117,63 @@
     "address": "Address:",
     "markTreated": "Mark as Treated",
     "startMonitoring": "Start Monitoring",
-    "recommendedTreatment": "Recommended Treatment"
+    "recommendedTreatment": "Recommended Treatment",
+    "crops": {
+      "wheat": "Wheat",
+      "rice": "Rice",
+      "cotton": "Cotton",
+      "tomato": "Tomato",
+      "potato": "Potato",
+      "onion": "Onion",
+      "groundnut": "Groundnut",
+      "mustard": "Mustard"
+    },
+    "months": {
+      "january": "January",
+      "february": "February",
+      "march": "March",
+      "april": "April",
+      "may": "May",
+      "june": "June",
+      "july": "July",
+      "august": "August",
+      "september": "September",
+      "october": "October",
+      "november": "November",
+      "december": "December"
+    },
+    "status": {
+      "identified": "Identified",
+      "treated": "Treated",
+      "monitoring": "Monitoring",
+      "scanning": "Scanning",
+      "unknown": "Unknown"
+    },
+    "labels": {
+      "crop": "Crop:",
+      "disease": "Disease:",
+      "severity": "Severity:",
+      "confidence": "Confidence:"
+    },
+    "diseases": {
+      "leafSpot": "Leaf Spot",
+      "powderyMildew": "Powdery Mildew",
+      "rustDisease": "Rust Disease",
+      "bacterialBlight": "Bacterial Blight",
+      "earlyBlight": "Early Blight"
+    },
+    "treatments": {
+      "leafSpot": "Apply copper-based fungicide spray every 7-10 days",
+      "powderyMildew": "Use sulfur-based fungicide or neem oil spray",
+      "rustDisease": "Apply propiconazole-based fungicide",
+      "bacterialBlight": "Use copper-based bactericide spray",
+      "earlyBlight": "Apply chlorothalonil or mancozeb fungicide"
+    },
+    "severityLevels": {
+      "low": "Low",
+      "moderate": "Moderate",
+      "high": "High"
+    }
   },
   "store": {
     "title": "Store",
@@ -133,13 +192,47 @@
     "rating": "Rating",
     "inStock": "In Stock",
     "price": "Price",
-    "description": "Description"
+    "description": "Description",
+    "productsFound": "products found",
+    "product": "product",
+    "searchFor": "for",
+    "viewCart": "View Cart",
+    "noProductsMatch": "No products match",
+    "noProductsCategory": "No products available in this category"
   },
   "profile": {
     "title": "Profile",
     "editProfile": "Edit Profile",
     "settings": "Settings",
-    "logout": "Logout"
+    "logout": "Logout",
+    "personalInfo": "Personal Information",
+    "addressInfo": "Address Information",
+    "accountOptions": "Account Options",
+    "username": "Username",
+    "fullName": "Full Name",
+    "changePhoto": "Change Profile Photo",
+    "choosePhotoMethod": "Choose how you want to update your photo:",
+    "takePhoto": "Take Photo",
+    "chooseGallery": "Choose from Gallery",
+    "photoUpdated": "Profile photo updated successfully",
+    "updateSuccess": "Profile updated successfully",
+    "requiredFields": "Please fill in all required fields",
+    "usernamePlaceholder": "Enter your username",
+    "fullNamePlaceholder": "Enter your full name",
+    "phonePlaceholder": "Enter your phone number",
+    "passwordPlaceholder": "Enter new password (leave blank to keep current)",
+    "addressLine": "Address Line",
+    "city": "City",
+    "state": "State",
+    "pincode": "Pincode",
+    "addressLinePlaceholder": "House no, Street, Area",
+    "cityPlaceholder": "Enter your city",
+    "statePlaceholder": "Enter your state",
+    "pincodePlaceholder": "Enter pincode",
+    "changeLanguage": "Change Language",
+    "notifications": "Notification Settings",
+    "privacy": "Privacy & Security",
+    "deleteAccount": "Delete Account"
   },
   "soilTesting": {
     "title": "Soil Testing",
@@ -161,7 +254,35 @@
     "low": "Low",
     "optimal": "Optimal",
     "needsImprovement": "Needs Improvement",
-    "poor": "Poor"
+    "poor": "Poor",
+    "status": {
+      "completed": "Completed",
+      "processing": "Processing",
+      "failed": "Failed",
+      "unknown": "Unknown"
+    },
+    "nutrientLevels": {
+      "processing": "Processing...",
+      "high": "High",
+      "medium": "Medium",
+      "low": "Low"
+    },
+    "captureTitle": "Capture Soil Sample",
+    "captureSubtitle": "Choose how you want to capture your soil sample:",
+    "successMessage": "Soil sample captured! Processing will take about 90 seconds.",
+    "errorMessage": "Failed to capture soil sample. Please try again.",
+    "uploadError": "Failed to upload image. Please try again.",
+    "processingMessage": "Analyzing soil sample... Results will be available in ~90 seconds",
+    "emptySubtitle": "Take your first soil photo to get started with soil analysis",
+    "phLevelLabel": "pH Level:",
+    "nitrogenLabel": "Nitrogen (N):",
+    "phosphorusLabel": "Phosphorus (P):",
+    "potassiumLabel": "Potassium (K):",
+    "recommendations": {
+      "organicMatter": "Consider adding organic matter to improve soil structure",
+      "monitorPH": "Monitor pH levels regularly",
+      "applyNPK": "Apply balanced NPK fertilizer as needed"
+    }
   },
   "navigation": {
     "home": "Home",
@@ -171,7 +292,10 @@
     "profile": "Profile",
     "notifications": "Notifications",
     "calendar": "Calendar",
-    "cart": "Cart"
+    "cart": "Cart",
+    "helpSupport": "Help & Support",
+    "about": "About AgriProxy",
+    "menu": "Menu"
   },
   "notifications": {
     "title": "Notifications",
@@ -200,7 +324,11 @@
     "free": "Free",
     "total": "Total",
     "clearSearch": "Clear Search",
-    "checkout": "Checkout"
+    "checkout": "Checkout",
+    "emptyCartSubtitle": "Add products from the store to get started",
+    "itemsInCart": "items in your cart",
+    "item": "item",
+    "proceedToCheckout": "Proceed to Checkout"
   },
   "placeholders": {
     "userProfileSoon": "User profile coming soon",

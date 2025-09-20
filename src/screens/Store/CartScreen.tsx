@@ -85,7 +85,7 @@ export const CartScreen: React.FC<CartScreenProps> = ({ onTabChange }) => {
       <ShoppingCart size={64} color={theme.colors.textSecondary} />
       <Text style={styles.emptyStateTitle}>{t('cart.emptyCart')}</Text>
       <Text style={styles.emptyStateSubtitle}>
-        Add products from the store to get started
+        {t('cart.emptyCartSubtitle')}
       </Text>
       <Button
         title={t('cart.browseProducts')}
@@ -97,22 +97,22 @@ export const CartScreen: React.FC<CartScreenProps> = ({ onTabChange }) => {
 
   const CartSummary = () => (
     <Card style={styles.summaryCard}>
-      <Text style={styles.summaryTitle}>Order Summary</Text>
+      <Text style={styles.summaryTitle}>{t('cart.orderSummary')}</Text>
 
       <View style={styles.summaryRow}>
-        <Text style={styles.summaryLabel}>Items ({getCartItemsCount()})</Text>
+        <Text style={styles.summaryLabel}>{t('cart.items')} ({getCartItemsCount()})</Text>
         <Text style={styles.summaryValue}>{formatPrice(getCartTotal())}</Text>
       </View>
 
       <View style={styles.summaryRow}>
-        <Text style={styles.summaryLabel}>Delivery Fee</Text>
-        <Text style={styles.summaryValue}>Free</Text>
+        <Text style={styles.summaryLabel}>{t('cart.deliveryFee')}</Text>
+        <Text style={styles.summaryValue}>{t('cart.free')}</Text>
       </View>
 
       <View style={styles.summaryDivider} />
 
       <View style={styles.summaryRow}>
-        <Text style={styles.summaryTotal}>Total</Text>
+        <Text style={styles.summaryTotal}>{t('cart.total')}</Text>
         <Text style={styles.summaryTotalValue}>{formatPrice(getCartTotal())}</Text>
       </View>
     </Card>
@@ -123,7 +123,7 @@ export const CartScreen: React.FC<CartScreenProps> = ({ onTabChange }) => {
       <View style={styles.header}>
         <Text style={styles.headerTitle}>{t('cart.title')}</Text>
         <Text style={styles.headerSubtitle}>
-          {state.cart.length} {state.cart.length === 1 ? 'item' : 'items'} in your cart
+          {state.cart.length} {state.cart.length === 1 ? t('cart.item') : t('cart.itemsInCart')}
         </Text>
       </View>
 
@@ -146,11 +146,10 @@ export const CartScreen: React.FC<CartScreenProps> = ({ onTabChange }) => {
               style={styles.checkoutButton}
               onPress={() => {
                 // Handle checkout logic here
-                console.log('Proceeding to checkout');
               }}
             >
               <Text style={styles.checkoutButtonText}>
-                Proceed to Checkout
+                {t('cart.proceedToCheckout')}
               </Text>
               <ArrowRight size={20} color="white" />
             </TouchableOpacity>

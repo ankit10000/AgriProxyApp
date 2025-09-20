@@ -10,6 +10,14 @@ export interface User {
   crops: string[];
   isPremium: boolean;
   avatar?: string;
+  username?: string;
+  fullName?: string;
+  address?: {
+    addressLine?: string;
+    city?: string;
+    state?: string;
+    pincode?: string;
+  };
 }
 
 // Product Types

@@ -16,6 +16,8 @@ import { Mail, Lock, User, Phone, MapPin, Eye, EyeOff } from 'lucide-react-nativ
 import { useAuth } from '../../context/AuthContext';
 import { useLocalization } from '../../context/LocalizationContext';
 import { theme } from '../../styles/theme';
+import { useApiMutation } from '../../hooks';
+import { authApi } from '../../services/authApi';
 
 interface SignupScreenProps {
   onNavigateToLogin: () => void;
@@ -32,10 +34,28 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
   });
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const { signup } = useAuth();
   const { t } = useLocalization();
+
+  const { mutate: handleSignup, loading: isLoading } = useApiMutation(
+    (userData: any) => authApi.signup(userData),
+    {
+      successMessage: t('auth.signupSuccess') || 'Account created successfully! 🎉',
+      errorMessage: t('auth.signupError') || 'Signup failed. Please try again.',
+      onSuccess: async (response) => {
+        if (response?.success) {
+          await signup({
+            name: formData.name,
+            email: formData.email,
+            password: formData.password,
+            phone: formData.phone,
+            location: formData.location,
+          });
+        }
+      },
+    }
+  );
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -46,7 +66,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
     setFormData(prev => ({ ...prev, [field]: value }));
   };
 
-  const handleSignup = async () => {
+  const onSignupPress = async () => {
     if (!formData.name.trim()) {
       Alert.alert(t('common.error'), t('auth.requiredField'));
       return;
@@ -72,26 +92,13 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
       return;
     }
 
-    setIsLoading(true);
-    try {
-      const success = await signup({
-        name: formData.name,
-        email: formData.email,
-        password: formData.password,
-        phone: formData.phone,
-        location: formData.location,
-      });
-
-      if (success) {
-        Alert.alert(t('common.success'), t('auth.signupSuccess'));
-      } else {
-        Alert.alert(t('common.error'), t('auth.signupError'));
-      }
-    } catch (error) {
-      Alert.alert(t('common.error'), t('auth.signupError'));
-    } finally {
-      setIsLoading(false);
-    }
+    await handleSignup({
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      phone: formData.phone,
+      location: formData.location,
+    });
   };
 
   return (
@@ -124,6 +131,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
                 <TextInput
                   style={styles.textInput}
                   placeholder={t('auth.name')}
+                  placeholderTextColor={theme.colors.textSecondary}
                   value={formData.name}
                   onChangeText={(value) => handleInputChange('name', value)}
                   autoCapitalize="words"
@@ -139,6 +147,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
                 <TextInput
                   style={styles.textInput}
                   placeholder={t('auth.email')}
+                  placeholderTextColor={theme.colors.textSecondary}
                   value={formData.email}
                   onChangeText={(value) => handleInputChange('email', value)}
                   keyboardType="email-address"
@@ -155,6 +164,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
                 <TextInput
                   style={styles.textInput}
                   placeholder={t('auth.phone')}
+                  placeholderTextColor={theme.colors.textSecondary}
                   value={formData.phone}
                   onChangeText={(value) => handleInputChange('phone', value)}
                   keyboardType="phone-pad"
@@ -171,6 +181,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
                 <TextInput
                   style={styles.textInput}
                   placeholder={t('auth.location')}
+                  placeholderTextColor={theme.colors.textSecondary}
                   value={formData.location}
                   onChangeText={(value) => handleInputChange('location', value)}
                   autoCapitalize="words"
@@ -186,6 +197,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
                 <TextInput
                   style={[styles.textInput, styles.passwordInput]}
                   placeholder={t('auth.password')}
+                  placeholderTextColor={theme.colors.textSecondary}
                   value={formData.password}
                   onChangeText={(value) => handleInputChange('password', value)}
                   secureTextEntry={!showPassword}
@@ -212,6 +224,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
                 <TextInput
                   style={[styles.textInput, styles.passwordInput]}
                   placeholder={t('auth.confirmPassword')}
+                  placeholderTextColor={theme.colors.textSecondary}
                   value={formData.confirmPassword}
                   onChangeText={(value) => handleInputChange('confirmPassword', value)}
                   secureTextEntry={!showConfirmPassword}
@@ -234,7 +247,7 @@ export const SignupScreen: React.FC<SignupScreenProps> = ({ onNavigateToLogin })
             {/* Signup Button */}
             <TouchableOpacity
               style={[styles.signupButton, isLoading && styles.disabledButton]}
-              onPress={handleSignup}
+              onPress={onSignupPress}
               disabled={isLoading}
             >
               <Text style={styles.signupButtonText}>

@@ -41,7 +41,8 @@
     "signupError": "साइन अप में त्रुटि",
     "invalidEmail": "गलत ईमेल पता",
     "passwordMismatch": "पासवर्ड मेल नहीं खाते",
-    "requiredField": "यह फील्ड आवश्यक है"
+    "requiredField": "यह फील्ड आवश्यक है",
+    "confirmLogout": "क्या आप वाकई लॉगआउट करना चाहते हैं?"
   },
   "home": {
     "welcome": "स्वागत है",
@@ -70,6 +71,8 @@
   },
   "plantDisease": {
     "title": "पौधों की बीमारी की पहचान",
+    "getInstantSoilAnalysis": "केवल 90 सेकंड में मृदा विश्लेषण के त्वरित परिणाम प्राप्त करें",
+    "takeFirstSoilPhoto": "अपनी पहली मृदा तस्वीर लें ताकि मृदा विश्लेषण शुरू हो जाए",
     "subtitle": "AI-संचालित पौधों की बीमारी की पहचान और उपचार की सिफारिशें",
     "selectCrop": "फसल का चयन करें",
     "chooseCrop": "अपनी फसल चुनें",
@@ -114,7 +117,63 @@
     "address": "पता:",
     "markTreated": "उपचारित के रूप में चिह्नित करें",
     "startMonitoring": "निगरानी शुरू करें",
-    "recommendedTreatment": "अनुशंसित उपचार"
+    "recommendedTreatment": "अनुशंसित उपचार",
+    "crops": {
+      "wheat": "गेहूं",
+      "rice": "चावल",
+      "cotton": "कपास",
+      "tomato": "टमाटर",
+      "potato": "आलू",
+      "onion": "प्याज",
+      "groundnut": "मूंगफली",
+      "mustard": "सरसों"
+    },
+    "months": {
+      "january": "जनवरी",
+      "february": "फरवरी",
+      "march": "मार्च",
+      "april": "अप्रैल",
+      "may": "मई",
+      "june": "जून",
+      "july": "जुलाई",
+      "august": "अगस्त",
+      "september": "सितंबर",
+      "october": "अक्टूबर",
+      "november": "नवंबर",
+      "december": "दिसंबर"
+    },
+    "status": {
+      "identified": "पहचान की गई",
+      "treated": "उपचारित",
+      "monitoring": "निगरानी",
+      "scanning": "स्कैन हो रहा है",
+      "unknown": "अज्ञात"
+    },
+    "labels": {
+      "crop": "फसल:",
+      "disease": "बीमारी:",
+      "severity": "गंभीरता:",
+      "confidence": "विश्वसनीयता:"
+    },
+    "diseases": {
+      "leafSpot": "पत्ती धब्बा",
+      "powderyMildew": "पाउडरी फफूंदी",
+      "rustDisease": "रतुआ रोग",
+      "bacterialBlight": "जीवाणु झुलसा",
+      "earlyBlight": "अगेती झुलसा"
+    },
+    "treatments": {
+      "leafSpot": "हर 7-10 दिन में तांबा आधारित कवकनाशी का छिड़काव करें",
+      "powderyMildew": "सल्फर आधारित कवकनाशी या नीम के तेल का छिड़काव करें",
+      "rustDisease": "प्रोपिकोनाजोल आधारित कवकनाशी का प्रयोग करें",
+      "bacterialBlight": "तांबा आधारित जीवाणुनाशी का छिड़काव करें",
+      "earlyBlight": "क्लोरोथालोनिल या मैंकोजेब कवकनाशी का प्रयोग करें"
+    },
+    "severityLevels": {
+      "low": "कम",
+      "moderate": "मध्यम",
+      "high": "अधिक"
+    }
   },
   "store": {
     "title": "स्टोर",
@@ -133,13 +192,47 @@
     "rating": "रेटिंग",
     "inStock": "स्टॉक में है",
     "price": "कीमत",
-    "description": "विवरण"
+    "description": "विवरण",
+    "productsFound": "उत्पाद मिले",
+    "product": "उत्पाद",
+    "searchFor": "के लिए",
+    "viewCart": "कार्ट देखें",
+    "noProductsMatch": "कोई उत्पाद मेल नहीं खाता",
+    "noProductsCategory": "इस श्रेणी में कोई उत्पाद उपलब्ध नहीं"
   },
   "profile": {
     "title": "प्रोफाइल",
     "editProfile": "प्रोफाइल संपादित करें",
     "settings": "सेटिंग्स",
-    "logout": "लॉगआउट"
+    "logout": "लॉगआउट",
+    "personalInfo": "व्यक्तिगत जानकारी",
+    "addressInfo": "पता जानकारी",
+    "accountOptions": "खाता विकल्प",
+    "username": "उपयोगकर्ता नाम",
+    "fullName": "पूरा नाम",
+    "changePhoto": "प्रोफाइल फोटो बदलें",
+    "choosePhotoMethod": "आप अपनी फोटो कैसे अपडेट करना चाहते हैं:",
+    "takePhoto": "फोटो लें",
+    "chooseGallery": "गैलरी से चुनें",
+    "photoUpdated": "प्रोफाइल फोटो सफलतापूर्वक अपडेट हुई",
+    "updateSuccess": "प्रोफाइल सफलतापूर्वक अपडेट हुई",
+    "requiredFields": "कृपया सभी आवश्यक फील्ड भरें",
+    "usernamePlaceholder": "अपना उपयोगकर्ता नाम दर्ज करें",
+    "fullNamePlaceholder": "अपना पूरा नाम दर्ज करें",
+    "phonePlaceholder": "अपना फोन नंबर दर्ज करें",
+    "passwordPlaceholder": "नया पासवर्ड दर्ज करें (वर्तमान रखने के लिए खाली छोड़ें)",
+    "addressLine": "पता लाइन",
+    "city": "शहर",
+    "state": "राज्य",
+    "pincode": "पिनकोड",
+    "addressLinePlaceholder": "घर नंबर, गली, क्षेत्र",
+    "cityPlaceholder": "अपना शहर दर्ज करें",
+    "statePlaceholder": "अपना राज्य दर्ज करें",
+    "pincodePlaceholder": "पिनकोड दर्ज करें",
+    "changeLanguage": "भाषा बदलें",
+    "notifications": "सूचना सेटिंग्स",
+    "privacy": "गोपनीयता और सुरक्षा",
+    "deleteAccount": "खाता डिलीट करें"
   },
   "soilTesting": {
     "title": "मिट्टी परीक्षण",
@@ -161,7 +254,35 @@
     "low": "कम",
     "optimal": "उत्तम",
     "needsImprovement": "सुधार की आवश्यकता",
-    "poor": "खराब"
+    "poor": "खराब",
+    "status": {
+      "completed": "पूर्ण",
+      "processing": "प्रसंस्करण",
+      "failed": "असफल",
+      "unknown": "अज्ञात"
+    },
+    "nutrientLevels": {
+      "processing": "प्रसंस्करण...",
+      "high": "उच्च",
+      "medium": "मध्यम",
+      "low": "कम"
+    },
+    "captureTitle": "मिट्टी का नमूना लें",
+    "captureSubtitle": "आप अपने मिट्टी के नमूने को कैसे कैप्चर करना चाहते हैं:",
+    "successMessage": "मिट्टी का नमूना कैप्चर हुआ! प्रसंस्करण में लगभग 90 सेकंड लगेंगे।",
+    "errorMessage": "मिट्टी का नमूना कैप्चर करने में असफल। कृपया पुनः प्रयास करें।",
+    "uploadError": "छवि अपलोड करने में असफल। कृपया पुनः प्रयास करें।",
+    "processingMessage": "मिट्टी के नमूने का विश्लेषण... परिणाम ~90 सेकंड में उपलब्ध होंगे",
+    "emptySubtitle": "मिट्टी विश्लेषण शुरू करने के लिए अपनी पहली मिट्टी की तस्वीर लें",
+    "phLevelLabel": "pH स्तर:",
+    "nitrogenLabel": "नाइट्रोजन (N):",
+    "phosphorusLabel": "फास्फोरस (P):",
+    "potassiumLabel": "पोटैशियम (K):",
+    "recommendations": {
+      "organicMatter": "मिट्टी की संरचना में सुधार के लिए जैविक पदार्थ जोड़ने पर विचार करें",
+      "monitorPH": "pH स्तर की नियमित निगरानी करें",
+      "applyNPK": "आवश्यकतानुसार संतुलित NPK उर्वरक का प्रयोग करें"
+    }
   },
   "navigation": {
     "home": "होम",
@@ -171,7 +292,10 @@
     "profile": "प्रोफाइल",
     "notifications": "सूचनाएं",
     "calendar": "कैलेंडर",
-    "cart": "कार्ट"
+    "cart": "कार्ट",
+    "helpSupport": "सहायता और समर्थन",
+    "about": "AgriProxy के बारे में",
+    "menu": "मेनू"
   },
   "notifications": {
     "title": "सूचनाएं",
@@ -200,7 +324,11 @@
     "free": "निःशुल्क",
     "total": "कुल",
     "clearSearch": "खोज साफ़ करें",
-    "checkout": "चेकआउट करें"
+    "checkout": "चेकआउट करें",
+    "emptyCartSubtitle": "शुरुआत करने के लिए स्टोर से उत्पाद जोड़ें",
+    "itemsInCart": "आइटम आपके कार्ट में",
+    "item": "आइटम",
+    "proceedToCheckout": "चेकआउट के लिए आगे बढ़ें"
   },
   "placeholders": {
     "userProfileSoon": "उपयोगकर्ता प्रोफ़ाइल जल्द आएगी",

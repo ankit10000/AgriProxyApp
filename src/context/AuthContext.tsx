@@ -1,13 +1,32 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import React, {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import { authApi, AuthResponse, ApiError } from "../services/authApi";
 
 export interface User {
-  id: string;
+  _id: string;
   name: string;
+  username: string;
+  addressLine?: string;
+  city?: string;
+  state?: string;
+  pincode?: string;
   email: string;
   phone?: string;
   location?: string;
   avatar?: string;
+  role: string;
+  isActive: boolean;
+  emailVerified: boolean;
+  profileCompleted: boolean;
+  createdAt: string;
+  updatedAt: string;
+  lastLogin: string;
 }
 
 interface AuthContextType {
@@ -42,12 +61,35 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const checkAuthState = async () => {
     try {
-      const userData = await AsyncStorage.getItem('user');
-      if (userData) {
-        setUser(JSON.parse(userData));
+      const [userData, token] = await AsyncStorage.multiGet([
+        "user",
+        "auth_token",
+      ]);
+
+      if (userData[1] && token[1]) {
+        // We have stored user data and token
+        setUser(JSON.parse(userData[1]));
+
+        // Optionally verify token with backend
+        try {
+          const response = await authApi.getProfile();
+          if (response.success && response.data?.user) {
+            // Update user data with latest from server
+            setUser(response.data.user);
+            await AsyncStorage.setItem(
+              "user",
+              JSON.stringify(response.data.user)
+            );
+          }
+        } catch (error) {
+          // Token might be expired, clear storage
+          console.log("Token verification failed, clearing storage");
+          await AsyncStorage.multiRemove(["user", "auth_token"]);
+          setUser(null);
+        }
       }
     } catch (error) {
-      console.error('Error checking auth state:', error);
+      console.error("Error checking auth state:", error);
     } finally {
       setIsLoading(false);
     }
@@ -57,28 +99,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await authApi.login({ email, password });
 
-      // For demo purposes, accept any email/password combination
-      // In real app, this would be an API call
-      if (email && password) {
-        const userData: User = {
-          id: Date.now().toString(),
-          name: email.split('@')[0],
-          email: email,
-          avatar: undefined,
-        };
-
-        await AsyncStorage.setItem('user', JSON.stringify(userData));
-        setUser(userData);
+      if (response.success && response.data?.user) {
+        setUser(response.data.user);
         return true;
       }
 
       return false;
-    } catch (error) {
-      console.error('Login error:', error);
-      return false;
+    } catch (error: any) {
+      console.error("Login error:", error);
+      // Re-throw error so UI can handle it
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -94,24 +126,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setIsLoading(true);
 
-      // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1000));
+      const response = await authApi.signup(userData);
 
-      const newUser: User = {
-        id: Date.now().toString(),
-        name: userData.name,
-        email: userData.email,
-        phone: userData.phone,
-        location: userData.location,
-        avatar: undefined,
-      };
+      if (response.success && response.data?.user) {
+        setUser(response.data.user);
+        return true;
+      }
 
-      await AsyncStorage.setItem('user', JSON.stringify(newUser));
-      setUser(newUser);
-      return true;
-    } catch (error) {
-      console.error('Signup error:', error);
       return false;
+    } catch (error: any) {
+      console.error("Signup error:", error);
+      // Re-throw error so UI can handle it
+      throw error;
     } finally {
       setIsLoading(false);
     }
@@ -119,22 +145,34 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
   const logout = async (): Promise<void> => {
     try {
-      await AsyncStorage.removeItem('user');
-      setUser(null);
+      await authApi.logout();
     } catch (error) {
-      console.error('Logout error:', error);
+      console.error("Logout error:", error);
+    } finally {
+      // Always clear local state and storage
+      await AsyncStorage.multiRemove(["user", "auth_token"]);
+      setUser(null);
     }
   };
 
   const updateUser = async (userData: Partial<User>): Promise<void> => {
     try {
       if (user) {
-        const updatedUser = { ...user, ...userData };
-        await AsyncStorage.setItem('user', JSON.stringify(updatedUser));
-        setUser(updatedUser);
+        const updateData = {
+          name: userData.name,
+          phone: userData.phone,
+          location: userData.location,
+        };
+
+        const response = await authApi.updateProfile(updateData);
+
+        if (response.success && response.data?.user) {
+          setUser(response.data.user);
+        }
       }
     } catch (error) {
-      console.error('Update user error:', error);
+      console.error("Update user error:", error);
+      throw error;
     }
   };
 
@@ -160,7 +198,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 export const useAuth = (): AuthContextType => {
   const context = useContext(AuthContext);
   if (!context) {
-    throw new Error('useAuth must be used within an AuthProvider');
+    throw new Error("useAuth must be used within an AuthProvider");
   }
   return context;
 };

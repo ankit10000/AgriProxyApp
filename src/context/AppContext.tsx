@@ -27,6 +27,7 @@ type AppAction =
   | { type: 'CLEAR_CART' }
   | { type: 'TOGGLE_FAVORITE'; payload: number }
   | { type: 'UPDATE_USER'; payload: Partial<User> }
+  | { type: 'UPDATE_USER_PROFILE'; payload: Partial<User> }
   | { type: 'ADD_SOIL_TEST'; payload: SoilTest }
   | { type: 'UPDATE_SOIL_TEST'; payload: SoilTest }
   | { type: 'ADD_PLANT_DISEASE'; payload: PlantDisease }
@@ -39,11 +40,21 @@ const initialState: AppState = {
   user: {
     id: '1',
     name: 'Rajesh Kumar',
+    email: 'rajesh.kumar@gmail.com',
+    phone: '+91 98765 43210',
     location: 'Jaipur, Rajasthan',
     memberSince: 'Jan 2023',
     totalArea: '25 Acres',
     crops: ['Wheat', 'Rice', 'Cotton'],
     isPremium: true,
+    username: 'rajesh_farmer',
+    fullName: 'Rajesh Kumar Singh',
+    address: {
+      addressLine: '123 Green Valley Farm',
+      city: 'Jaipur',
+      state: 'Rajasthan',
+      pincode: '302012',
+    },
   },
   crops: [
     { id: 1, name: 'Wheat', planted: '2025-01-15', area: '10 acres', status: 'Growing', progress: 60 },
@@ -170,7 +181,13 @@ const appReducer = (state: AppState, action: AppAction): AppState => {
         ...state,
         user: { ...state.user, ...action.payload }
       };
-    
+
+    case 'UPDATE_USER_PROFILE':
+      return {
+        ...state,
+        user: { ...state.user, ...action.payload }
+      };
+
     case 'ADD_SOIL_TEST':
       return {
         ...state,

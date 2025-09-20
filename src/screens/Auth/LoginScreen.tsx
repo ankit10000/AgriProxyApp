@@ -16,6 +16,8 @@ import { Mail, Lock, Eye, EyeOff } from 'lucide-react-native';
 import { useAuth } from '../../context/AuthContext';
 import { useLocalization } from '../../context/LocalizationContext';
 import { theme } from '../../styles/theme';
+import { useApiMutation } from '../../hooks';
+import { authApi } from '../../services/authApi';
 
 interface LoginScreenProps {
   onNavigateToSignup: () => void;
@@ -25,17 +27,29 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToSignup }) 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
 
   const { login } = useAuth();
   const { t } = useLocalization();
+
+  const { mutate: handleLogin, loading: isLoading } = useApiMutation(
+    (credentials: { email: string; password: string }) => authApi.login(credentials),
+    {
+      successMessage: t('auth.loginSuccess') || 'Login successful! 🎉',
+      errorMessage: t('auth.loginError') || 'Login failed. Please try again.',
+      onSuccess: async (response) => {
+        if (response?.success) {
+          await login(email, password);
+        }
+      },
+    }
+  );
 
   const validateEmail = (email: string) => {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     return emailRegex.test(email);
   };
 
-  const handleLogin = async () => {
+  const onLoginPress = async () => {
     if (!email.trim()) {
       Alert.alert(t('common.error'), t('auth.requiredField'));
       return;
@@ -51,19 +65,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToSignup }) 
       return;
     }
 
-    setIsLoading(true);
-    try {
-      const success = await login(email, password);
-      if (success) {
-        Alert.alert(t('common.success'), t('auth.loginSuccess'));
-      } else {
-        Alert.alert(t('common.error'), t('auth.loginError'));
-      }
-    } catch (error) {
-      Alert.alert(t('common.error'), t('auth.loginError'));
-    } finally {
-      setIsLoading(false);
-    }
+    await handleLogin({ email, password });
   };
 
   return (
@@ -99,6 +101,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToSignup }) 
                 <TextInput
                   style={styles.textInput}
                   placeholder={t('auth.email')}
+                  placeholderTextColor={theme.colors.textSecondary}
                   value={email}
                   onChangeText={setEmail}
                   keyboardType="email-address"
@@ -115,6 +118,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToSignup }) 
                 <TextInput
                   style={[styles.textInput, styles.passwordInput]}
                   placeholder={t('auth.password')}
+                  placeholderTextColor={theme.colors.textSecondary}
                   value={password}
                   onChangeText={setPassword}
                   secureTextEntry={!showPassword}
@@ -142,7 +146,7 @@ export const LoginScreen: React.FC<LoginScreenProps> = ({ onNavigateToSignup }) 
             {/* Login Button */}
             <TouchableOpacity
               style={[styles.loginButton, isLoading && styles.disabledButton]}
-              onPress={handleLogin}
+              onPress={onLoginPress}
               disabled={isLoading}
             >
               <Text style={styles.loginButtonText}>

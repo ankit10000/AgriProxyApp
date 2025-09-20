@@ -23,6 +23,7 @@ import { StoreScreen } from "../screens/Store/StoreScreen";
 import { CartScreen } from "../screens/Store/CartScreen";
 import { SoilTestingScreen } from "../screens/SoilTesting/SoilTestingScreen";
 import { PlantDiseaseScreen } from "../screens/PlantDisease/PlantDiseaseScreen";
+import { ProfileScreen } from "../screens/Profile/ProfileScreen";
 import { Header } from "../components/ui/Header";
 import { useApp } from "../context/AppContext";
 import { useLocalization } from "../context/LocalizationContext";
@@ -30,20 +31,6 @@ import { theme } from "../styles/theme";
 import { TabName } from "../types";
 
 // Placeholder screens for missing tabs
-const ProfileScreen = ({
-  onTabChange,
-}: {
-  onTabChange: (tab: TabName) => void;
-}) => {
-  const { t } = useLocalization();
-  return (
-    <View style={styles.placeholderContainer}>
-      <User size={48} color={theme.colors.textSecondary} />
-      <Text style={styles.placeholderTitle}>{t('profile.title')}</Text>
-      <Text style={styles.placeholderSubtitle}>{t('placeholders.userProfileSoon')}</Text>
-    </View>
-  );
-};
 
 const NotificationsScreen = ({
   onTabChange,

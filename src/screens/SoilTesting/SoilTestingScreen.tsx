@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, ScrollView, StyleSheet, Alert } from 'react-native';
 import { Camera, FlaskConical, Activity, AlertTriangle, CheckCircle2, Clock, FileImage } from 'lucide-react-native';
 import { useApp } from '../../context/AppContext';
 import { useLocalization } from '../../context/LocalizationContext';
@@ -14,15 +14,15 @@ interface SoilTestingScreenProps {
   onTabChange: (tab: TabName) => void;
 }
 
-export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChange }) => {
+export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = () => {
   const { state, dispatch } = useApp();
   const { t } = useLocalization();
   const [isUploading, setIsUploading] = useState(false);
 
   const handleCameraCapture = () => {
     Alert.alert(
-      'Capture Soil Sample',
-      'Choose how you want to capture your soil sample:',
+      t('soilTesting.captureTitle'),
+      t('soilTesting.captureSubtitle'),
       [
         { text: t('plantDisease.takePhoto'), onPress: () => capturePhoto() },
         { text: t('plantDisease.uploadFromGallery'), onPress: () => uploadFromGallery() },
@@ -58,17 +58,17 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
           phosphorus: (['Low', 'Medium', 'High'] as const)[Math.floor(Math.random() * 3)],
           potassium: (['Low', 'Medium', 'High'] as const)[Math.floor(Math.random() * 3)],
           recommendations: [
-            'Consider adding organic matter to improve soil structure',
-            'Monitor pH levels regularly',
-            'Apply balanced NPK fertilizer as needed'
+            t('soilTesting.recommendations.organicMatter'),
+            t('soilTesting.recommendations.monitorPH'),
+            t('soilTesting.recommendations.applyNPK')
           ]
         };
         dispatch({ type: 'UPDATE_SOIL_TEST', payload: completedTest });
       }, 3000);
       
-      Alert.alert('Success', 'Soil sample captured! Processing will take about 90 seconds.');
+      Alert.alert(t('common.success'), t('soilTesting.successMessage'));
     } catch (error) {
-      Alert.alert('Error', 'Failed to capture soil sample. Please try again.');
+      Alert.alert(t('common.error'), t('soilTesting.errorMessage'));
     } finally {
       setIsUploading(false);
     }
@@ -81,7 +81,7 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
       await new Promise(resolve => setTimeout(resolve, 1000));
       capturePhoto(); // Use same logic for demo
     } catch (error) {
-      Alert.alert('Error', 'Failed to upload image. Please try again.');
+      Alert.alert(t('common.error'), t('soilTesting.uploadError'));
       setIsUploading(false);
     }
   };
@@ -102,26 +102,26 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
   const getStatusText = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'Completed';
+        return t('soilTesting.status.completed');
       case 'processing':
-        return 'Processing';
+        return t('soilTesting.status.processing');
       case 'failed':
-        return 'Failed';
+        return t('soilTesting.status.failed');
       default:
-        return 'Unknown';
+        return t('soilTesting.status.unknown');
     }
   };
 
   const getNutrientLevel = (level: string | null) => {
-    if (!level) return { text: 'Processing...', color: '#6b7280' };
+    if (!level) return { text: t('soilTesting.nutrientLevels.processing'), color: '#6b7280' };
     
     switch (level.toLowerCase()) {
       case 'high':
-        return { text: 'High', color: '#10b981' };
+        return { text: t('soilTesting.nutrientLevels.high'), color: '#10b981' };
       case 'medium':
-        return { text: 'Medium', color: '#f59e0b' };
+        return { text: t('soilTesting.nutrientLevels.medium'), color: '#f59e0b' };
       case 'low':
-        return { text: 'Low', color: '#ef4444' };
+        return { text: t('soilTesting.nutrientLevels.low'), color: '#ef4444' };
       default:
         return { text: level, color: '#6b7280' };
     }
@@ -147,26 +147,26 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
             <Text style={styles.resultsTitle}>{t('placeholders.testResults')}</Text>
             
             <View style={styles.nutrientRow}>
-              <Text style={styles.nutrientLabel}>pH Level:</Text>
+              <Text style={styles.nutrientLabel}>{t('soilTesting.phLevelLabel')}</Text>
               <Text style={styles.nutrientValue}>{test.ph?.toFixed(1) || 'N/A'}</Text>
             </View>
             
             <View style={styles.nutrientRow}>
-              <Text style={styles.nutrientLabel}>Nitrogen (N):</Text>
+              <Text style={styles.nutrientLabel}>{t('soilTesting.nitrogenLabel')}</Text>
               <Text style={[styles.nutrientValue, { color: getNutrientLevel(test.nitrogen).color }]}>
                 {getNutrientLevel(test.nitrogen).text}
               </Text>
             </View>
             
             <View style={styles.nutrientRow}>
-              <Text style={styles.nutrientLabel}>Phosphorus (P):</Text>
+              <Text style={styles.nutrientLabel}>{t('soilTesting.phosphorusLabel')}</Text>
               <Text style={[styles.nutrientValue, { color: getNutrientLevel(test.phosphorus).color }]}>
                 {getNutrientLevel(test.phosphorus).text}
               </Text>
             </View>
             
             <View style={styles.nutrientRow}>
-              <Text style={styles.nutrientLabel}>Potassium (K):</Text>
+              <Text style={styles.nutrientLabel}>{t('soilTesting.potassiumLabel')}</Text>
               <Text style={[styles.nutrientValue, { color: getNutrientLevel(test.potassium).color }]}>
                 {getNutrientLevel(test.potassium).text}
               </Text>
@@ -190,7 +190,7 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
         <View style={styles.processingContainer}>
           <Activity size={24} color={theme.colors.warning} />
           <Text style={styles.processingText}>
-            Analyzing soil sample... Results will be available in ~90 seconds
+            {t('soilTesting.processingMessage')}
           </Text>
         </View>
       )}
@@ -204,9 +204,9 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
         <View style={styles.headerContent}>
           <FlaskConical size={32} color={theme.colors.primary} />
           <View style={styles.headerText}>
-            <Text style={styles.headerTitle}>Soil Testing</Text>
+            <Text style={styles.headerTitle}>{t('plantDisease.soilTesting')}</Text>
             <Text style={styles.headerSubtitle}>
-              Get instant soil analysis results in just 90 seconds
+              {t('plantDisease.getInstantSoilAnalysis')}
             </Text>
           </View>
         </View>
@@ -242,7 +242,7 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
 
       {/* Test History */}
       <View style={styles.historySection}>
-        <Text style={styles.sectionTitle}>Test History</Text>
+        <Text style={styles.sectionTitle}>{t('soilTesting.testHistory')}</Text>
         {state.soilTests.length > 0 ? (
           state.soilTests.map(test => (
             <SoilTestCard key={test.id} test={test} />
@@ -252,30 +252,12 @@ export const SoilTestingScreen: React.FC<SoilTestingScreenProps> = ({ onTabChang
             <FlaskConical size={48} color={theme.colors.textSecondary} />
             <Text style={styles.emptyStateTitle}>{t('placeholders.noSoilTestsYet')}</Text>
             <Text style={styles.emptyStateSubtitle}>
-              Take your first soil photo to get started with soil analysis
+              {t('soilTesting.emptySubtitle')}
             </Text>
           </Card>
         )}
       </View>
 
-      {/* Quick Actions */}
-      <View style={styles.quickActions}>
-        <Text style={styles.sectionTitle}>Related Services</Text>
-        <TouchableOpacity 
-          style={styles.quickActionItem}
-          onPress={() => onTabChange('store')}
-        >
-          <Text style={styles.quickActionText}>{t('placeholders.browseFertilizers')}</Text>
-          <Text style={styles.quickActionSubtext}>{t('placeholders.basedOnSoilNeeds')}</Text>
-        </TouchableOpacity>
-        <TouchableOpacity 
-          style={styles.quickActionItem}
-          onPress={() => onTabChange('plantdisease')}
-        >
-          <Text style={styles.quickActionText}>Plant Disease Detection</Text>
-          <Text style={styles.quickActionSubtext}>AI-powered plant health analysis</Text>
-        </TouchableOpacity>
-      </View>
     </ScrollView>
   );
 };

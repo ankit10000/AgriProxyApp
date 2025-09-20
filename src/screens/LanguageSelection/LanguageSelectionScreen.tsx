@@ -38,10 +38,8 @@ export const LanguageSelectionScreen: React.FC<LanguageSelectionScreenProps> = (
 
         {/* Title */}
         <View style={styles.titleContainer}>
-          <Text style={styles.title}>Choose Language</Text>
-          <Text style={styles.titleHindi}>भाषा चुनें</Text>
-          <Text style={styles.subtitle}>Select your preferred language</Text>
-          <Text style={styles.subtitleHindi}>अपनी पसंदीदा भाषा का चयन करें</Text>
+          <Text style={styles.title}>{t('languageSelection.title')}</Text>
+          <Text style={styles.subtitle}>{t('languageSelection.subtitle')}</Text>
         </View>
 
         {/* Language Options */}
@@ -52,7 +50,7 @@ export const LanguageSelectionScreen: React.FC<LanguageSelectionScreenProps> = (
           >
             <View style={styles.languageContent}>
               <Text style={styles.languageFlag}>🇺🇸</Text>
-              <Text style={styles.languageText}>English</Text>
+              <Text style={styles.languageText}>{t('languageSelection.english')}</Text>
             </View>
           </TouchableOpacity>
 
@@ -62,7 +60,7 @@ export const LanguageSelectionScreen: React.FC<LanguageSelectionScreenProps> = (
           >
             <View style={styles.languageContent}>
               <Text style={styles.languageFlag}>🇮🇳</Text>
-              <Text style={styles.languageText}>हिंदी</Text>
+              <Text style={styles.languageText}>{t('languageSelection.hindi')}</Text>
             </View>
           </TouchableOpacity>
         </View>

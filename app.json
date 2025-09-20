@@ -40,7 +40,8 @@
         {
           "locationAlwaysAndWhenInUsePermission": "Allow AgriProxy to use your location for weather updates and farm management."
         }
-      ]
+      ],
+      "expo-font"
     ]
   }
 }

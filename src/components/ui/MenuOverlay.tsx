@@ -1,8 +1,9 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Modal, Alert, Pressable } from 'react-native';
 import { X, Settings, HelpCircle, Info, LogOut } from 'lucide-react-native';
 import { useLocalization } from '../../context/LocalizationContext';
 import { theme } from '../../styles/theme';
+import { useAuth } from '../../context/AuthContext';
 
 interface MenuOverlayProps {
   showMenu: boolean;
@@ -10,54 +11,55 @@ interface MenuOverlayProps {
 }
 
 export const MenuOverlay: React.FC<MenuOverlayProps> = ({ showMenu, onClose }) => {
+  const { logout } = useAuth();
   const { t } = useLocalization();
   const handleLogout = () => {
     Alert.alert(
-      'Logout',
-      'Are you sure you want to logout?',
+      t('profile.logout'),
+      t('auth.confirmLogout'),
       [
-        { text: 'Cancel', style: 'cancel' },
-        { 
-          text: 'Logout', 
+        { text: t('common.cancel'), style: 'cancel' },
+        {
+          text: t('profile.logout'),
           style: 'destructive',
           onPress: () => {
             onClose();
-            // Add logout logic here
-            console.log('User logged out');
+            logout();
           }
         }
       ]
     );
   };
 
+
   const menuItems = [
     {
       icon: Settings,
-      title: 'Settings',
+      title: t('profile.settings'),
       onPress: () => {
         onClose();
-        console.log('Settings pressed');
+        // Navigate to settings
       }
     },
     {
       icon: HelpCircle,
-      title: 'Help & Support',
+      title: t('navigation.helpSupport'),
       onPress: () => {
         onClose();
-        console.log('Help & Support pressed');
+        // Navigate to help & support
       }
     },
     {
       icon: Info,
-      title: 'About AgriProxy',
+      title: t('navigation.about'),
       onPress: () => {
         onClose();
-        console.log('About AgriProxy pressed');
+        // Navigate to about page
       }
     },
     {
       icon: LogOut,
-      title: 'Logout',
+      title: t('profile.logout'),
       onPress: handleLogout,
       isDestructive: true
     }
@@ -79,7 +81,7 @@ export const MenuOverlay: React.FC<MenuOverlayProps> = ({ showMenu, onClose }) =
         <View style={styles.menuContainer}>
           {/* Menu Header */}
           <View style={styles.menuHeader}>
-            <Text style={styles.menuTitle}>Menu</Text>
+            <Text style={styles.menuTitle}>{t('navigation.menu')}</Text>
             <TouchableOpacity
               style={styles.closeButton}
               onPress={onClose}

@@ -150,11 +150,11 @@ export const StoreScreen: React.FC<StoreScreenProps> = ({ onTabChange }) => {
       <ScrollView style={styles.productsContainer} showsVerticalScrollIndicator={false}>
         <View style={styles.resultsHeader}>
           <Text style={styles.resultsText}>
-            {filteredProducts.length} product{filteredProducts.length !== 1 ? 's' : ''} found
+            {filteredProducts.length} {filteredProducts.length !== 1 ? t('store.productsFound') : t('store.product')}
           </Text>
           {debouncedSearch && (
             <Text style={styles.searchResultText}>
-              for "{debouncedSearch}"
+              {t('store.searchFor')} "{debouncedSearch}"
             </Text>
           )}
         </View>
@@ -170,9 +170,9 @@ export const StoreScreen: React.FC<StoreScreenProps> = ({ onTabChange }) => {
             <ShoppingCart size={48} color={theme.colors.textSecondary} />
             <Text style={styles.emptyStateTitle}>{t('placeholders.noProductsFound')}</Text>
             <Text style={styles.emptyStateSubtitle}>
-              {debouncedSearch 
-                ? `No products match "${debouncedSearch}"`
-                : 'No products available in this category'
+              {debouncedSearch
+                ? `${t('store.noProductsMatch')} "${debouncedSearch}"`
+                : t('store.noProductsCategory')
               }
             </Text>
             {debouncedSearch && (
@@ -196,7 +196,7 @@ export const StoreScreen: React.FC<StoreScreenProps> = ({ onTabChange }) => {
         >
           <ShoppingCart size={24} color="white" />
           <Text style={styles.cartButtonText}>
-            View Cart ({state.cart.reduce((sum, item) => sum + item.quantity, 0)})
+            {t('store.viewCart')} ({state.cart.reduce((sum, item) => sum + item.quantity, 0)})
           </Text>
           {state.cart.length > 0 && (
             <View style={styles.cartBadge}>
